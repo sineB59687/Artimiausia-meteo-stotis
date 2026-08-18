@@ -1,1 +1,740 @@
+* {
+    box-sizing: border-box;
+}
 
+
+html,
+body {
+
+    margin: 0;
+
+    padding: 0;
+
+    height: 100%;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: #222;
+
+    background: #f4f6f8;
+
+}
+
+
+body {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+header {
+
+    background: white;
+
+    border-bottom:
+        1px solid #dddddd;
+
+}
+
+
+.header-content {
+
+    max-width:
+        1600px;
+
+    margin:
+        0 auto;
+
+    padding:
+        16px 25px;
+
+}
+
+
+header h1 {
+
+    margin:
+        0;
+
+    font-size:
+        22px;
+
+}
+
+
+header p {
+
+    margin:
+        4px 0 0;
+
+    color:
+        #777;
+
+    font-size:
+        13px;
+
+}
+
+
+main {
+
+    flex:
+        1;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    min-height:
+        0;
+
+}
+
+
+/* ==========================================================
+   SEARCH
+   ========================================================== */
+
+.search-area {
+
+    background:
+        white;
+
+    padding:
+        14px 25px;
+
+    border-bottom:
+        1px solid #dddddd;
+
+}
+
+
+.search-label {
+
+    font-weight:
+        bold;
+
+    margin-bottom:
+        6px;
+
+}
+
+
+.search-controls {
+
+    display:
+        flex;
+
+    gap:
+        10px;
+
+}
+
+
+#locationInput {
+
+    width:
+        min(600px, 100%);
+
+    padding:
+        10px 12px;
+
+    font-size:
+        15px;
+
+    border:
+        1px solid #cccccc;
+
+    border-radius:
+        5px;
+
+    outline:
+        none;
+
+}
+
+
+#locationInput:focus {
+
+    border-color:
+        #3578d4;
+
+    box-shadow:
+        0 0 0 2px rgba(
+            53,
+            120,
+            212,
+            0.12
+        );
+
+}
+
+
+button {
+
+    border:
+        none;
+
+    border-radius:
+        5px;
+
+    padding:
+        10px 20px;
+
+    background:
+        #3578d4;
+
+    color:
+        white;
+
+    font-size:
+        14px;
+
+    cursor:
+        pointer;
+
+}
+
+
+button:hover {
+
+    background:
+        #2865b5;
+
+}
+
+
+button:disabled {
+
+    background:
+        #999999;
+
+    cursor:
+        default;
+
+}
+
+
+/* ==========================================================
+   FILTER
+   ========================================================== */
+
+.filter-area {
+
+    background:
+        white;
+
+    padding:
+        9px 25px;
+
+    border-bottom:
+        1px solid #dddddd;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+
+}
+
+
+.filter-label {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    cursor:
+        pointer;
+
+    font-size:
+        14px;
+
+}
+
+
+#windOnly {
+
+    width:
+        17px;
+
+    height:
+        17px;
+
+    cursor:
+        pointer;
+
+}
+
+
+.filter-info {
+
+    color:
+        #888;
+
+    font-size:
+        12px;
+
+}
+
+
+/* ==========================================================
+   INSTRUCTION
+   ========================================================== */
+
+.instruction {
+
+    background:
+        white;
+
+    padding:
+        7px 25px;
+
+    border-bottom:
+        1px solid #dddddd;
+
+    display:
+        flex;
+
+    gap:
+        5px;
+
+    color:
+        #666;
+
+    font-size:
+        12px;
+
+}
+
+
+/* ==========================================================
+   RESULTS
+   ========================================================== */
+
+.results {
+
+    background:
+        white;
+
+    padding:
+        10px 25px;
+
+    border-bottom:
+        1px solid #dddddd;
+
+    display:
+        flex;
+
+    align-items:
+        stretch;
+
+    gap:
+        12px;
+
+}
+
+
+.station-card {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    min-width:
+        210px;
+
+    padding:
+        8px 12px;
+
+    border-left:
+        4px solid;
+
+    border-radius:
+        3px;
+
+    background:
+        #fafafa;
+
+}
+
+
+.station-card.primary {
+
+    border-color:
+        #d9534f;
+
+}
+
+
+.station-card.secondary {
+
+    border-color:
+        #f0ad4e;
+
+}
+
+
+.station-card.tertiary {
+
+    border-color:
+        #f7d154;
+
+}
+
+
+.station-number {
+
+    width:
+        26px;
+
+    height:
+        26px;
+
+    border-radius:
+        50%;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    margin-right:
+        9px;
+
+    background:
+        #777;
+
+    color:
+        white;
+
+    font-size:
+        12px;
+
+    font-weight:
+        bold;
+
+}
+
+
+.station-title {
+
+    color:
+        #777;
+
+    font-size:
+        10px;
+
+    font-weight:
+        bold;
+
+}
+
+
+.station-name {
+
+    margin-top:
+        2px;
+
+    font-size:
+        14px;
+
+    font-weight:
+        bold;
+
+}
+
+
+.station-distance {
+
+    margin-top:
+        2px;
+
+    color:
+        #555;
+
+    font-size:
+        12px;
+
+}
+
+
+.status {
+
+    margin-left:
+        auto;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    color:
+        #777;
+
+    font-size:
+        12px;
+
+    text-align:
+        right;
+
+}
+
+
+/* ==========================================================
+   MAP CONTROLS
+   ========================================================== */
+
+.map-controls {
+
+    background:
+        white;
+
+    padding:
+        6px;
+
+    border-bottom:
+        1px solid #dddddd;
+
+    text-align:
+        center;
+
+}
+
+
+/* ==========================================================
+   MAP
+   ========================================================== */
+
+#map {
+
+    flex:
+        1;
+
+    min-height:
+        400px;
+
+    width:
+        100%;
+
+}
+
+
+/* ==========================================================
+   WIND STATION MARKERS
+   ========================================================== */
+
+.wind-station-marker {
+
+    width:
+        12px;
+
+    height:
+        12px;
+
+    border-radius:
+        50%;
+
+    background:
+        #3578d4;
+
+    border:
+        2px solid white;
+
+    box-shadow:
+        0 1px 4px rgba(
+            0,
+            0,
+            0,
+            0.5
+        );
+
+}
+
+
+/* ==========================================================
+   FOOTER
+   ========================================================== */
+
+footer {
+
+    background:
+        white;
+
+    border-top:
+        1px solid #dddddd;
+
+    padding:
+        5px 15px;
+
+    text-align:
+        center;
+
+    color:
+        #999;
+
+    font-size:
+        10px;
+
+}
+
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media (max-width: 900px) {
+
+
+    .search-area {
+
+        padding:
+            12px 15px;
+
+    }
+
+
+    .search-controls {
+
+        flex-direction:
+            column;
+
+    }
+
+
+    #locationInput {
+
+        width:
+            100%;
+
+    }
+
+
+    .filter-area {
+
+        padding:
+            9px 15px;
+
+    }
+
+
+    .filter-info {
+
+        display:
+            none;
+
+    }
+
+
+    .instruction {
+
+        padding:
+            7px 15px;
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .results {
+
+        padding:
+            8px 15px;
+
+        display:
+            grid;
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        gap:
+            6px;
+
+    }
+
+
+    .station-card {
+
+        min-width:
+            0;
+
+        padding:
+            6px;
+
+    }
+
+
+    .station-number {
+
+        display:
+            none;
+
+    }
+
+
+    .station-name {
+
+        font-size:
+            12px;
+
+    }
+
+
+    .station-distance {
+
+        font-size:
+            11px;
+
+    }
+
+
+    .status {
+
+        grid-column:
+            1 / -1;
+
+        margin:
+            0;
+
+        justify-content:
+            center;
+
+        text-align:
+            center;
+
+    }
+
+
+    #map {
+
+        min-height:
+            450px;
+
+    }
+
+}
