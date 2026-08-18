@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="lt">
 
 <head>
@@ -11,16 +10,12 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        Meteorologijos stoties paieška
-    </title>
-
+    <title>Meteorologijos stočių paieška</title>
 
     <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     >
-
 
     <link
         rel="stylesheet"
@@ -37,18 +32,16 @@
 
     <div class="header-main">
 
-
         <div class="title-area">
 
             <h1>
-                Meteorologijos stoties paieška
+                Meteorologijos stočių paieška
             </h1>
 
         </div>
 
 
         <div class="search-area">
-
 
             <div class="autocomplete-wrapper">
 
@@ -58,7 +51,6 @@
                     autocomplete="off"
                     placeholder="Miestas arba adresas..."
                 >
-
 
                 <div
                     id="autocompleteResults"
@@ -89,9 +81,7 @@
 
             </label>
 
-
         </div>
-
 
     </div>
 
@@ -103,23 +93,14 @@
         Spustelėkite žemėlapį arba įveskite vietovę
     </div>
 
-
 </header>
 
 
 <main>
 
 
-    <!-- ==================================================
-         MAP
-         ================================================== -->
-
     <div id="map"></div>
 
-
-    <!-- ==================================================
-         RESULTS
-         ================================================== -->
 
     <div class="results-panel">
 
@@ -130,13 +111,11 @@
                 1
             </div>
 
-
             <div>
 
                 <div class="result-label">
                     ARTIMIAUSIA
                 </div>
-
 
                 <div
                     id="primaryName"
@@ -144,7 +123,6 @@
                 >
                     —
                 </div>
-
 
                 <div
                     id="primaryDistance"
@@ -164,13 +142,11 @@
                 2
             </div>
 
-
             <div>
 
                 <div class="result-label">
                     ANTROJI
                 </div>
-
 
                 <div
                     id="secondaryName"
@@ -178,7 +154,6 @@
                 >
                     —
                 </div>
-
 
                 <div
                     id="secondaryDistance"
@@ -198,13 +173,11 @@
                 3
             </div>
 
-
             <div>
 
                 <div class="result-label">
                     TREČIOJI
                 </div>
-
 
                 <div
                     id="tertiaryName"
@@ -212,7 +185,6 @@
                 >
                     —
                 </div>
-
 
                 <div
                     id="tertiaryDistance"
@@ -225,13 +197,8 @@
 
         </div>
 
-
     </div>
 
-
-    <!-- ==================================================
-         LEGEND
-         ================================================== -->
 
     <div class="map-legend">
 
@@ -308,13 +275,8 @@
 
         </div>
 
-
     </div>
 
-
-    <!-- ==================================================
-         ZOOM BUTTON
-         ================================================== -->
 
     <button
         id="zoomButton"
