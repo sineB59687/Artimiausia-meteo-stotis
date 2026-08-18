@@ -151,7 +151,7 @@ cache_lock = Lock()
 
 
 # ============================================================
-# REQUEST RATE LIMITING
+# RATE LIMITING
 # ============================================================
 
 request_history = {}
@@ -201,7 +201,7 @@ def check_rate_limit():
 
 
 # ============================================================
-# LOAD METEO.LT STATIONS
+# LOAD STATIONS
 # ============================================================
 
 def load_stations():
@@ -209,9 +209,7 @@ def load_stations():
     now = datetime.utcnow()
 
 
-    # ========================================================
-    # CHECK CACHE
-    # ========================================================
+    # Use cached stations if cache is still valid
 
     with cache_lock:
 
@@ -229,10 +227,6 @@ def load_stations():
             return station_cache["stations"]
 
 
-    # ========================================================
-    # DOWNLOAD FROM METEO.LT
-    # ========================================================
-
     try:
 
         response = requests.get(
@@ -244,7 +238,7 @@ def load_stations():
             headers={
 
                 "User-Agent":
-                    "MeteorologijosStotiesPaieska/1.0"
+                    "ArtimiausiaMeteoStotis/1.0"
 
             }
 
@@ -262,11 +256,8 @@ def load_stations():
         for station in data:
 
             coordinates = station.get(
-
                 "coordinates",
-
                 {}
-
             )
 
 
@@ -325,18 +316,14 @@ def load_stations():
             })
 
 
-        # ====================================================
-        # ADD MANUAL STATIONS
-        # ====================================================
+        # Add manually specified stations
 
         stations.extend(
             MANUAL_STATIONS
         )
 
 
-        # ====================================================
-        # SAVE CACHE
-        # ====================================================
+        # Save cache
 
         with cache_lock:
 
@@ -351,13 +338,11 @@ def load_stations():
     except Exception as error:
 
         print(
-            f"Station API error: {error}"
+            f"Meteo.lt station error: {error}"
         )
 
 
-        # ====================================================
-        # FALLBACK TO OLD CACHE
-        # ====================================================
+        # Use old cache if available
 
         with cache_lock:
 
@@ -366,13 +351,13 @@ def load_stations():
                 return station_cache["stations"]
 
 
-        # At minimum return manual stations
+        # At minimum use manual stations
 
         return MANUAL_STATIONS.copy()
 
 
 # ============================================================
-# FIND NEAREST STATIONS
+# CALCULATE NEAREST STATIONS
 # ============================================================
 
 def calculate_nearest_stations(
@@ -388,9 +373,7 @@ def calculate_nearest_stations(
     stations = load_stations()
 
 
-    # ========================================================
-    # FILTER
-    # ========================================================
+    # Filter by wind capability
 
     if wind_only:
 
@@ -420,10 +403,6 @@ def calculate_nearest_stations(
         }
 
 
-    # ========================================================
-    # USER LOCATION
-    # ========================================================
-
     user_coordinates = (
 
         latitude,
@@ -435,10 +414,6 @@ def calculate_nearest_stations(
 
     stations_with_distance = []
 
-
-    # ========================================================
-    # DISTANCES
-    # ========================================================
 
     for station in stations:
 
@@ -489,10 +464,6 @@ def calculate_nearest_stations(
         })
 
 
-    # ========================================================
-    # SORT
-    # ========================================================
-
     stations_with_distance.sort(
 
         key=lambda station:
@@ -500,10 +471,6 @@ def calculate_nearest_stations(
 
     )
 
-
-    # ========================================================
-    # THREE NEAREST
-    # ========================================================
 
     primary = (
 
@@ -538,19 +505,16 @@ def calculate_nearest_stations(
     )
 
 
-    # ========================================================
-    # MAP STATIONS
-    #
-    # When wind filter is active, send ALL wind-capable
-    # stations to the browser so they can be displayed.
-    # ========================================================
-
-    map_stations = []
-
+    # All stations are sent to the map only when
+    # wind filtering is active.
 
     if wind_only:
 
         map_stations = stations_with_distance
+
+    else:
+
+        map_stations = []
 
 
     return {
@@ -585,7 +549,7 @@ def index():
 
 
 # ============================================================
-# GEOCODING
+# LOCATION SEARCH
 # ============================================================
 
 @app.route(
@@ -611,9 +575,11 @@ def location():
     ) or {}
 
 
-    location_text = data.get(
-        "location",
-        ""
+    location_text = str(
+        data.get(
+            "location",
+            ""
+        )
     ).strip()
 
 
@@ -652,16 +618,35 @@ def location():
         geolocator = Nominatim(
 
             user_agent=
-                "meteorologines-stoties-paieska"
+                "ArtimiausiaMeteoStotis/1.0",
+
+            timeout=15
 
         )
 
 
+        # Add Lithuania to the search when the user
+        # doesn't explicitly specify a country.
+
+        search_query = location_text
+
+
+        if "lietuva" not in location_text.lower():
+
+            search_query += ", Lithuania"
+
+
         location_result = geolocator.geocode(
 
-            location_text,
+            search_query,
 
-            timeout=10
+            exactly_one=True,
+
+            addressdetails=True,
+
+            language="lt",
+
+            country_codes="lt"
 
         )
 
@@ -673,12 +658,14 @@ def location():
                 "success": False,
 
                 "error":
-                    "Vietovė nerasta."
+                    f"Vietovė „{location_text}“ nerasta."
 
             }
 
 
-            return jsonify(result), 404
+            return jsonify(
+                result
+            ), 404
 
 
         result = {
@@ -689,10 +676,14 @@ def location():
                 location_result.address,
 
             "latitude":
-                location_result.latitude,
+                float(
+                    location_result.latitude
+                ),
 
             "longitude":
-                location_result.longitude
+                float(
+                    location_result.longitude
+                )
 
         }
 
@@ -700,7 +691,9 @@ def location():
         geocode_cache[cache_key] = result
 
 
-        return jsonify(result)
+        return jsonify(
+            result
+        )
 
 
     except Exception as error:
@@ -715,13 +708,15 @@ def location():
             "success": False,
 
             "error":
-                "Nepavyko nustatyti vietovės."
+                "Nepavyko rasti vietovės. "
+                "Pabandykite įvesti miesto arba "
+                "gyvenvietės pavadinimą."
 
         }), 500
 
 
 # ============================================================
-# STATION SEARCH
+# STATION SEARCH API
 # ============================================================
 
 @app.route(
@@ -813,18 +808,19 @@ def stations():
         }), 400
 
 
-    result = calculate_nearest_stations(
+    return jsonify(
 
-        latitude,
+        calculate_nearest_stations(
 
-        longitude,
+            latitude,
 
-        bool(wind_only)
+            longitude,
+
+            bool(wind_only)
+
+        )
 
     )
-
-
-    return jsonify(result)
 
 
 # ============================================================
@@ -843,7 +839,7 @@ def health():
 
 
 # ============================================================
-# RUN LOCALLY
+# START
 # ============================================================
 
 if __name__ == "__main__":
