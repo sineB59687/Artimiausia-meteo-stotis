@@ -26,19 +26,16 @@ body {
 
 body {
 
-    display:
-        flex;
+    display: flex;
 
-    flex-direction:
-        column;
+    flex-direction: column;
 
 }
 
 
 header {
 
-    background:
-        white;
+    background: white;
 
     border-bottom:
         1px solid #dddddd;
@@ -48,56 +45,44 @@ header {
 
 .header-content {
 
-    max-width:
-        1600px;
+    max-width: 1600px;
 
-    margin:
-        0 auto;
+    margin: 0 auto;
 
-    padding:
-        16px 25px;
+    padding: 16px 25px;
 
 }
 
 
 header h1 {
 
-    margin:
-        0;
+    margin: 0;
 
-    font-size:
-        22px;
+    font-size: 22px;
 
 }
 
 
 header p {
 
-    margin:
-        4px 0 0;
+    margin: 4px 0 0;
 
-    color:
-        #777;
+    color: #777;
 
-    font-size:
-        13px;
+    font-size: 13px;
 
 }
 
 
 main {
 
-    flex:
-        1;
+    flex: 1;
 
-    display:
-        flex;
+    display: flex;
 
-    flex-direction:
-        column;
+    flex-direction: column;
 
-    min-height:
-        0;
+    min-height: 0;
 
 }
 
@@ -108,11 +93,9 @@ main {
 
 .search-area {
 
-    background:
-        white;
+    background: white;
 
-    padding:
-        14px 25px;
+    padding: 14px 25px;
 
     border-bottom:
         1px solid #dddddd;
@@ -122,45 +105,47 @@ main {
 
 .search-label {
 
-    font-weight:
-        bold;
+    font-weight: bold;
 
-    margin-bottom:
-        6px;
+    margin-bottom: 6px;
 
 }
 
 
 .search-controls {
 
-    display:
-        flex;
+    display: flex;
 
-    gap:
-        10px;
+    gap: 10px;
+
+    align-items: flex-start;
+
+}
+
+
+.autocomplete-wrapper {
+
+    position: relative;
+
+    width: min(600px, 100%);
 
 }
 
 
 #locationInput {
 
-    width:
-        min(600px, 100%);
+    width: 100%;
 
-    padding:
-        10px 12px;
+    padding: 10px 12px;
 
-    font-size:
-        15px;
+    font-size: 15px;
 
     border:
         1px solid #cccccc;
 
-    border-radius:
-        5px;
+    border-radius: 5px;
 
-    outline:
-        none;
+    outline: none;
 
 }
 
@@ -184,45 +169,133 @@ main {
 
 button {
 
-    border:
-        none;
+    border: none;
 
-    border-radius:
-        5px;
+    border-radius: 5px;
 
-    padding:
-        10px 20px;
+    padding: 10px 20px;
 
-    background:
-        #3578d4;
+    background: #3578d4;
 
-    color:
-        white;
+    color: white;
 
-    font-size:
-        14px;
+    font-size: 14px;
 
-    cursor:
-        pointer;
+    cursor: pointer;
 
 }
 
 
 button:hover {
 
-    background:
-        #2865b5;
+    background: #2865b5;
 
 }
 
 
 button:disabled {
 
-    background:
-        #999999;
+    background: #999999;
 
-    cursor:
-        default;
+    cursor: default;
+
+}
+
+
+/* ==========================================================
+   AUTOCOMPLETE
+   ========================================================== */
+
+.autocomplete-results {
+
+    position: absolute;
+
+    top: calc(100% + 3px);
+
+    left: 0;
+
+    right: 0;
+
+    background: white;
+
+    border:
+        1px solid #cccccc;
+
+    border-radius: 5px;
+
+    box-shadow:
+        0 4px 12px
+        rgba(
+            0,
+            0,
+            0,
+            0.15
+        );
+
+    z-index: 2000;
+
+    display: none;
+
+    overflow: hidden;
+
+}
+
+
+.autocomplete-item {
+
+    padding: 10px 12px;
+
+    cursor: pointer;
+
+    border-bottom:
+        1px solid #eeeeee;
+
+}
+
+
+.autocomplete-item:last-child {
+
+    border-bottom: none;
+
+}
+
+
+.autocomplete-item:hover {
+
+    background: #f2f6fb;
+
+}
+
+
+.autocomplete-name {
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    color: #222;
+
+}
+
+
+.autocomplete-address {
+
+    margin-top: 3px;
+
+    font-size: 12px;
+
+    color: #777;
+
+}
+
+
+.autocomplete-loading {
+
+    padding: 10px 12px;
+
+    font-size: 13px;
+
+    color: #777;
 
 }
 
@@ -233,68 +306,53 @@ button:disabled {
 
 .filter-area {
 
-    background:
-        white;
+    background: white;
 
-    padding:
-        9px 25px;
+    padding: 9px 25px;
 
     border-bottom:
         1px solid #dddddd;
 
-    display:
-        flex;
+    display: flex;
 
-    align-items:
-        center;
+    align-items: center;
 
-    gap:
-        12px;
+    gap: 12px;
 
 }
 
 
 .filter-label {
 
-    display:
-        flex;
+    display: flex;
 
-    align-items:
-        center;
+    align-items: center;
 
-    gap:
-        8px;
+    gap: 8px;
 
-    cursor:
-        pointer;
+    cursor: pointer;
 
-    font-size:
-        14px;
+    font-size: 14px;
 
 }
 
 
 #windOnly {
 
-    width:
-        17px;
+    width: 17px;
 
-    height:
-        17px;
+    height: 17px;
 
-    cursor:
-        pointer;
+    cursor: pointer;
 
 }
 
 
 .filter-info {
 
-    color:
-        #888;
+    color: #888;
 
-    font-size:
-        12px;
+    font-size: 12px;
 
 }
 
@@ -305,26 +363,20 @@ button:disabled {
 
 .instruction {
 
-    background:
-        white;
+    background: white;
 
-    padding:
-        7px 25px;
+    padding: 7px 25px;
 
     border-bottom:
         1px solid #dddddd;
 
-    display:
-        flex;
+    display: flex;
 
-    gap:
-        5px;
+    gap: 5px;
 
-    color:
-        #666;
+    color: #666;
 
-    font-size:
-        12px;
+    font-size: 12px;
 
 }
 
@@ -335,176 +387,136 @@ button:disabled {
 
 .results {
 
-    background:
-        white;
+    background: white;
 
-    padding:
-        10px 25px;
+    padding: 10px 25px;
 
     border-bottom:
         1px solid #dddddd;
 
-    display:
-        flex;
+    display: flex;
 
-    align-items:
-        stretch;
+    align-items: stretch;
 
-    gap:
-        12px;
+    gap: 12px;
 
 }
 
 
 .station-card {
 
-    display:
-        flex;
+    display: flex;
 
-    align-items:
-        center;
+    align-items: center;
 
-    min-width:
-        210px;
+    min-width: 210px;
 
-    padding:
-        8px 12px;
+    padding: 8px 12px;
 
     border-left:
         4px solid;
 
-    border-radius:
-        3px;
+    border-radius: 3px;
 
-    background:
-        #fafafa;
+    background: #fafafa;
 
 }
 
 
 .station-card.primary {
 
-    border-color:
-        #d9534f;
+    border-color: #d9534f;
 
 }
 
 
 .station-card.secondary {
 
-    border-color:
-        #f0ad4e;
+    border-color: #f0ad4e;
 
 }
 
 
 .station-card.tertiary {
 
-    border-color:
-        #f7d154;
+    border-color: #f7d154;
 
 }
 
 
 .station-number {
 
-    width:
-        26px;
+    width: 26px;
 
-    height:
-        26px;
+    height: 26px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
-    display:
-        flex;
+    display: flex;
 
-    align-items:
-        center;
+    align-items: center;
 
-    justify-content:
-        center;
+    justify-content: center;
 
-    margin-right:
-        9px;
+    margin-right: 9px;
 
-    background:
-        #777;
+    background: #777;
 
-    color:
-        white;
+    color: white;
 
-    font-size:
-        12px;
+    font-size: 12px;
 
-    font-weight:
-        bold;
+    font-weight: bold;
 
 }
 
 
 .station-title {
 
-    color:
-        #777;
+    color: #777;
 
-    font-size:
-        10px;
+    font-size: 10px;
 
-    font-weight:
-        bold;
+    font-weight: bold;
 
 }
 
 
 .station-name {
 
-    margin-top:
-        2px;
+    margin-top: 2px;
 
-    font-size:
-        14px;
+    font-size: 14px;
 
-    font-weight:
-        bold;
+    font-weight: bold;
 
 }
 
 
 .station-distance {
 
-    margin-top:
-        2px;
+    margin-top: 2px;
 
-    color:
-        #555;
+    color: #555;
 
-    font-size:
-        12px;
+    font-size: 12px;
 
 }
 
 
 .status {
 
-    margin-left:
-        auto;
+    margin-left: auto;
 
-    display:
-        flex;
+    display: flex;
 
-    align-items:
-        center;
+    align-items: center;
 
-    color:
-        #777;
+    color: #777;
 
-    font-size:
-        12px;
+    font-size: 12px;
 
-    text-align:
-        right;
+    text-align: right;
 
 }
 
@@ -515,17 +527,14 @@ button:disabled {
 
 .map-controls {
 
-    background:
-        white;
+    background: white;
 
-    padding:
-        6px;
+    padding: 6px;
 
     border-bottom:
         1px solid #dddddd;
 
-    text-align:
-        center;
+    text-align: center;
 
 }
 
@@ -536,14 +545,11 @@ button:disabled {
 
 #map {
 
-    flex:
-        1;
+    flex: 1;
 
-    min-height:
-        400px;
+    min-height: 400px;
 
-    width:
-        100%;
+    width: 100%;
 
 }
 
@@ -554,17 +560,13 @@ button:disabled {
 
 .wind-station-marker {
 
-    width:
-        12px;
+    width: 12px;
 
-    height:
-        12px;
+    height: 12px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
-    background:
-        #3578d4;
+    background: #3578d4;
 
     border:
         2px solid white;
@@ -587,23 +589,18 @@ button:disabled {
 
 footer {
 
-    background:
-        white;
+    background: white;
 
     border-top:
         1px solid #dddddd;
 
-    padding:
-        5px 15px;
+    padding: 5px 15px;
 
-    text-align:
-        center;
+    text-align: center;
 
-    color:
-        #999;
+    color: #999;
 
-    font-size:
-        10px;
+    font-size: 10px;
 
 }
 
@@ -617,128 +614,115 @@ footer {
 
     .search-area {
 
-        padding:
-            12px 15px;
+        padding: 12px 15px;
 
     }
 
 
     .search-controls {
 
-        flex-direction:
-            column;
+        flex-direction: column;
 
     }
 
 
-    #locationInput {
+    .autocomplete-wrapper {
 
-        width:
-            100%;
+        width: 100%;
+
+    }
+
+
+    .search-controls button {
+
+        width: 100%;
 
     }
 
 
     .filter-area {
 
-        padding:
-            9px 15px;
+        padding: 9px 15px;
 
     }
 
 
     .filter-info {
 
-        display:
-            none;
+        display: none;
 
     }
 
 
     .instruction {
 
-        padding:
-            7px 15px;
+        padding: 7px 15px;
 
-        flex-direction:
-            column;
+        flex-direction: column;
 
     }
 
 
     .results {
 
-        padding:
-            8px 15px;
+        padding: 8px 15px;
 
-        display:
-            grid;
+        display: grid;
 
         grid-template-columns:
             repeat(3, 1fr);
 
-        gap:
-            6px;
+        gap: 6px;
 
     }
 
 
     .station-card {
 
-        min-width:
-            0;
+        min-width: 0;
 
-        padding:
-            6px;
+        padding: 6px;
 
     }
 
 
     .station-number {
 
-        display:
-            none;
+        display: none;
 
     }
 
 
     .station-name {
 
-        font-size:
-            12px;
+        font-size: 12px;
 
     }
 
 
     .station-distance {
 
-        font-size:
-            11px;
+        font-size: 11px;
 
     }
 
 
     .status {
 
-        grid-column:
-            1 / -1;
+        grid-column: 1 / -1;
 
-        margin:
-            0;
+        margin: 0;
 
-        justify-content:
-            center;
+        justify-content: center;
 
-        text-align:
-            center;
+        text-align: center;
 
     }
 
 
     #map {
 
-        min-height:
-            450px;
+        min-height: 450px;
 
     }
 
