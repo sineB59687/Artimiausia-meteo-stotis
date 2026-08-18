@@ -10,7 +10,11 @@ body {
 
     padding: 0;
 
+    width: 100%;
+
     height: 100%;
+
+    overflow: hidden;
 
     font-family:
         Arial,
@@ -18,8 +22,6 @@ body {
         sans-serif;
 
     color: #222;
-
-    background: #f4f6f8;
 
 }
 
@@ -30,59 +32,59 @@ body {
 
     flex-direction: column;
 
+    background: #eef1f4;
+
 }
 
+
+/* ==========================================================
+   HEADER
+   ========================================================== */
 
 header {
 
     background: white;
 
     border-bottom:
-        1px solid #dddddd;
+        1px solid #d5d9dd;
+
+    z-index: 1000;
 
 }
 
 
-.header-content {
+.header-main {
 
-    max-width: 1600px;
-
-    margin: 0 auto;
-
-    padding: 16px 25px;
-
-}
-
-
-header h1 {
-
-    margin: 0;
-
-    font-size: 22px;
-
-}
-
-
-header p {
-
-    margin: 4px 0 0;
-
-    color: #777;
-
-    font-size: 13px;
-
-}
-
-
-main {
-
-    flex: 1;
+    height: 62px;
 
     display: flex;
 
-    flex-direction: column;
+    align-items: center;
 
-    min-height: 0;
+    gap: 28px;
+
+    padding:
+        0 18px;
+
+}
+
+
+.title-area {
+
+    flex-shrink: 0;
+
+}
+
+
+h1 {
+
+    margin: 0;
+
+    font-size: 19px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
 
 }
 
@@ -93,32 +95,13 @@ main {
 
 .search-area {
 
-    background: white;
-
-    padding: 14px 25px;
-
-    border-bottom:
-        1px solid #dddddd;
-
-}
-
-
-.search-label {
-
-    font-weight: bold;
-
-    margin-bottom: 6px;
-
-}
-
-
-.search-controls {
-
     display: flex;
 
-    gap: 10px;
+    align-items: center;
 
-    align-items: flex-start;
+    gap: 8px;
+
+    flex: 1;
 
 }
 
@@ -127,7 +110,7 @@ main {
 
     position: relative;
 
-    width: min(600px, 100%);
+    width: min(500px, 100%);
 
 }
 
@@ -136,14 +119,17 @@ main {
 
     width: 100%;
 
-    padding: 10px 12px;
+    height: 36px;
 
-    font-size: 15px;
+    padding:
+        0 11px;
 
     border:
-        1px solid #cccccc;
+        1px solid #c7ccd1;
 
     border-radius: 5px;
+
+    font-size: 14px;
 
     outline: none;
 
@@ -153,49 +139,512 @@ main {
 #locationInput:focus {
 
     border-color:
-        #3578d4;
+        #3978c9;
 
     box-shadow:
         0 0 0 2px
         rgba(
-            53,
+            57,
             120,
-            212,
+            201,
             0.12
         );
 
 }
 
 
-button {
+#findButton {
+
+    height: 36px;
+
+    padding:
+        0 17px;
 
     border: none;
 
     border-radius: 5px;
 
-    padding: 10px 20px;
-
-    background: #3578d4;
+    background:
+        #3978c9;
 
     color: white;
 
-    font-size: 14px;
+    font-size: 13px;
 
     cursor: pointer;
 
 }
 
 
-button:hover {
+#findButton:hover {
 
-    background: #2865b5;
+    background:
+        #2e67ae;
 
 }
 
 
-button:disabled {
+#findButton:disabled {
 
-    background: #999999;
+    background:
+        #999;
+
+    cursor:
+        default;
+
+}
+
+
+/* ==========================================================
+   WIND FILTER
+   ========================================================== */
+
+.wind-filter {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-left: 5px;
+
+    white-space: nowrap;
+
+    font-size: 13px;
+
+    color: #444;
+
+    cursor: pointer;
+
+}
+
+
+.wind-filter input {
+
+    width: 15px;
+
+    height: 15px;
+
+    margin: 0;
+
+}
+
+
+/* ==========================================================
+   STATUS
+   ========================================================== */
+
+.status {
+
+    height: 25px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding:
+        0 18px;
+
+    background:
+        #f8f9fa;
+
+    color:
+        #777;
+
+    font-size: 11px;
+
+}
+
+
+/* ==========================================================
+   MAIN / MAP
+   ========================================================== */
+
+main {
+
+    position: relative;
+
+    flex: 1;
+
+    min-height: 0;
+
+}
+
+
+#map {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+}
+
+
+/* ==========================================================
+   LEGEND
+   ========================================================== */
+
+.map-legend {
+
+    position: absolute;
+
+    left: 14px;
+
+    bottom: 28px;
+
+    z-index: 1000;
+
+    min-width: 215px;
+
+    padding:
+        10px 12px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.94
+        );
+
+    border:
+        1px solid
+        rgba(
+            0,
+            0,
+            0,
+            0.15
+        );
+
+    border-radius: 6px;
+
+    box-shadow:
+        0 2px 8px
+        rgba(
+            0,
+            0,
+            0,
+            0.15
+        );
+
+    backdrop-filter:
+        blur(3px);
+
+}
+
+
+.legend-title {
+
+    margin-bottom: 7px;
+
+    padding-bottom: 5px;
+
+    border-bottom:
+        1px solid #ddd;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+}
+
+
+.legend-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    height: 23px;
+
+    font-size: 11px;
+
+    color: #444;
+
+}
+
+
+.legend-symbol {
+
+    width: 18px;
+
+    text-align: center;
+
+    display: inline-block;
+
+    font-size: 16px;
+
+    line-height: 18px;
+
+}
+
+
+.location-symbol {
+
+    color:
+        #2674d8;
+
+}
+
+
+.primary-symbol {
+
+    color:
+        #d94a45;
+
+}
+
+
+.secondary-symbol {
+
+    color:
+        #ed9d2f;
+
+}
+
+
+.tertiary-symbol {
+
+    color:
+        #d4b500;
+
+}
+
+
+.wind-symbol {
+
+    color:
+        #3978c9;
+
+    font-size: 22px;
+
+}
+
+
+/* ==========================================================
+   RESULTS PANEL
+   ========================================================== */
+
+.results-panel {
+
+    position: absolute;
+
+    top: 12px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 1000;
+
+    display: flex;
+
+    gap: 6px;
+
+    pointer-events: none;
+
+}
+
+
+.result-card {
+
+    min-width: 175px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding:
+        7px 10px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.95
+        );
+
+    border-radius: 5px;
+
+    border-left:
+        4px solid;
+
+    box-shadow:
+        0 2px 7px
+        rgba(
+            0,
+            0,
+            0,
+            0.16
+        );
+
+}
+
+
+.result-card.primary {
+
+    border-color:
+        #d94a45;
+
+}
+
+
+.result-card.secondary {
+
+    border-color:
+        #ed9d2f;
+
+}
+
+
+.result-card.tertiary {
+
+    border-color:
+        #d4b500;
+
+}
+
+
+.result-number {
+
+    width: 22px;
+
+    height: 22px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        #555;
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+}
+
+
+.result-label {
+
+    font-size: 8px;
+
+    color: #888;
+
+    font-weight: bold;
+
+}
+
+
+.result-name {
+
+    max-width: 145px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    margin-top: 1px;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+}
+
+
+.result-distance {
+
+    margin-top: 1px;
+
+    font-size: 10px;
+
+    color: #666;
+
+}
+
+
+/* ==========================================================
+   ZOOM BUTTON
+   ========================================================== */
+
+.zoom-button {
+
+    position: absolute;
+
+    right: 14px;
+
+    bottom: 28px;
+
+    z-index: 1000;
+
+    height: 35px;
+
+    padding:
+        0 15px;
+
+    border: none;
+
+    border-radius: 5px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.95
+        );
+
+    color:
+        #333;
+
+    box-shadow:
+        0 2px 7px
+        rgba(
+            0,
+            0,
+            0,
+            0.18
+        );
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+}
+
+
+.zoom-button:hover {
+
+    background: white;
+
+}
+
+
+.zoom-button:disabled {
+
+    opacity: 0.55;
 
     cursor: default;
 
@@ -216,10 +665,16 @@ button:disabled {
 
     right: 0;
 
+    z-index: 3000;
+
+    display: none;
+
+    overflow: hidden;
+
     background: white;
 
     border:
-        1px solid #cccccc;
+        1px solid #ccc;
 
     border-radius: 5px;
 
@@ -229,26 +684,21 @@ button:disabled {
             0,
             0,
             0,
-            0.15
+            0.18
         );
-
-    z-index: 2000;
-
-    display: none;
-
-    overflow: hidden;
 
 }
 
 
 .autocomplete-item {
 
-    padding: 10px 12px;
-
-    cursor: pointer;
+    padding:
+        8px 11px;
 
     border-bottom:
-        1px solid #eeeeee;
+        1px solid #eee;
+
+    cursor: pointer;
 
 }
 
@@ -262,195 +712,53 @@ button:disabled {
 
 .autocomplete-item:hover {
 
-    background: #f2f6fb;
+    background:
+        #f1f5fa;
 
 }
 
 
 .autocomplete-name {
 
-    font-size: 14px;
+    font-size: 13px;
 
-    font-weight: bold;
-
-    color: #222;
+    font-weight: 600;
 
 }
 
 
 .autocomplete-address {
 
-    margin-top: 3px;
-
-    font-size: 12px;
+    margin-top: 2px;
 
     color: #777;
+
+    font-size: 11px;
 
 }
 
 
 .autocomplete-loading {
 
-    padding: 10px 12px;
-
-    font-size: 13px;
+    padding:
+        9px 11px;
 
     color: #777;
 
-}
-
-
-/* ==========================================================
-   FILTER
-   ========================================================== */
-
-.filter-area {
-
-    background: white;
-
-    padding: 9px 25px;
-
-    border-bottom:
-        1px solid #dddddd;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-}
-
-
-.filter-label {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    cursor: pointer;
-
-    font-size: 14px;
-
-}
-
-
-#windOnly {
-
-    width: 17px;
-
-    height: 17px;
-
-    cursor: pointer;
-
-}
-
-
-.filter-info {
-
-    color: #888;
-
-    font-size: 12px;
+    font-size: 11px;
 
 }
 
 
 /* ==========================================================
-   INSTRUCTION
+   CUSTOM MAP MARKERS
    ========================================================== */
 
-.instruction {
+.station-marker {
 
-    background: white;
+    width: 28px;
 
-    padding: 7px 25px;
-
-    border-bottom:
-        1px solid #dddddd;
-
-    display: flex;
-
-    gap: 5px;
-
-    color: #666;
-
-    font-size: 12px;
-
-}
-
-
-/* ==========================================================
-   RESULTS
-   ========================================================== */
-
-.results {
-
-    background: white;
-
-    padding: 10px 25px;
-
-    border-bottom:
-        1px solid #dddddd;
-
-    display: flex;
-
-    align-items: stretch;
-
-    gap: 12px;
-
-}
-
-
-.station-card {
-
-    display: flex;
-
-    align-items: center;
-
-    min-width: 210px;
-
-    padding: 8px 12px;
-
-    border-left:
-        4px solid;
-
-    border-radius: 3px;
-
-    background: #fafafa;
-
-}
-
-
-.station-card.primary {
-
-    border-color: #d9534f;
-
-}
-
-
-.station-card.secondary {
-
-    border-color: #f0ad4e;
-
-}
-
-
-.station-card.tertiary {
-
-    border-color: #f7d154;
-
-}
-
-
-.station-number {
-
-    width: 26px;
-
-    height: 26px;
-
-    border-radius: 50%;
+    height: 28px;
 
     display: flex;
 
@@ -458,149 +766,59 @@ button:disabled {
 
     justify-content: center;
 
-    margin-right: 9px;
-
-    background: #777;
+    border-radius: 50%;
 
     color: white;
 
-    font-size: 12px;
+    font-size: 15px;
 
     font-weight: bold;
-
-}
-
-
-.station-title {
-
-    color: #777;
-
-    font-size: 10px;
-
-    font-weight: bold;
-
-}
-
-
-.station-name {
-
-    margin-top: 2px;
-
-    font-size: 14px;
-
-    font-weight: bold;
-
-}
-
-
-.station-distance {
-
-    margin-top: 2px;
-
-    color: #555;
-
-    font-size: 12px;
-
-}
-
-
-.status {
-
-    margin-left: auto;
-
-    display: flex;
-
-    align-items: center;
-
-    color: #777;
-
-    font-size: 12px;
-
-    text-align: right;
-
-}
-
-
-/* ==========================================================
-   MAP CONTROLS
-   ========================================================== */
-
-.map-controls {
-
-    background: white;
-
-    padding: 6px;
-
-    border-bottom:
-        1px solid #dddddd;
-
-    text-align: center;
-
-}
-
-
-/* ==========================================================
-   MAP
-   ========================================================== */
-
-#map {
-
-    flex: 1;
-
-    min-height: 400px;
-
-    width: 100%;
-
-}
-
-
-/* ==========================================================
-   WIND STATION MARKERS
-   ========================================================== */
-
-.wind-station-marker {
-
-    width: 12px;
-
-    height: 12px;
-
-    border-radius: 50%;
-
-    background: #3578d4;
 
     border:
         2px solid white;
 
     box-shadow:
-        0 1px 4px
+        0 2px 5px
         rgba(
             0,
             0,
             0,
-            0.5
+            0.45
         );
 
 }
 
 
-/* ==========================================================
-   FOOTER
-   ========================================================== */
+.location-marker {
 
-footer {
+    background:
+        #2674d8;
 
-    background: white;
+    border-radius: 50%;
 
-    border-top:
-        1px solid #dddddd;
+}
 
-    padding: 5px 15px;
 
-    text-align: center;
+.primary-marker {
 
-    color: #999;
+    background:
+        #d94a45;
 
-    font-size: 10px;
+}
+
+
+.secondary-marker {
+
+    background:
+        #ed9d2f;
+
+}
+
+
+.tertiary-marker {
+
+    background:
+        #d4b500;
 
 }
 
@@ -612,117 +830,172 @@ footer {
 @media (max-width: 900px) {
 
 
+    .header-main {
+
+        height: auto;
+
+        min-height: 58px;
+
+        padding:
+            8px 12px;
+
+        gap: 10px;
+
+    }
+
+
+    h1 {
+
+        font-size: 15px;
+
+    }
+
+
     .search-area {
 
-        padding: 12px 15px;
+        gap: 5px;
 
     }
 
 
-    .search-controls {
-
-        flex-direction: column;
-
-    }
-
-
-    .autocomplete-wrapper {
-
-        width: 100%;
-
-    }
-
-
-    .search-controls button {
-
-        width: 100%;
-
-    }
-
-
-    .filter-area {
-
-        padding: 9px 15px;
-
-    }
-
-
-    .filter-info {
+    .wind-filter span {
 
         display: none;
 
     }
 
 
-    .instruction {
+    .wind-filter {
 
-        padding: 7px 15px;
-
-        flex-direction: column;
-
-    }
-
-
-    .results {
-
-        padding: 8px 15px;
-
-        display: grid;
-
-        grid-template-columns:
-            repeat(3, 1fr);
-
-        gap: 6px;
-
-    }
-
-
-    .station-card {
-
-        min-width: 0;
-
-        padding: 6px;
-
-    }
-
-
-    .station-number {
-
-        display: none;
-
-    }
-
-
-    .station-name {
-
-        font-size: 12px;
-
-    }
-
-
-    .station-distance {
-
-        font-size: 11px;
+        margin-left: 0;
 
     }
 
 
     .status {
 
-        grid-column: 1 / -1;
+        height: 22px;
 
-        margin: 0;
-
-        justify-content: center;
-
-        text-align: center;
+        padding:
+            0 12px;
 
     }
 
 
-    #map {
+    .results-panel {
 
-        min-height: 450px;
+        left: 10px;
+
+        right: 10px;
+
+        transform: none;
+
+        gap: 4px;
+
+    }
+
+
+    .result-card {
+
+        min-width: 0;
+
+        flex: 1;
+
+        padding:
+            6px;
+
+    }
+
+
+    .result-number {
+
+        display: none;
+
+    }
+
+
+    .result-name {
+
+        max-width: 100%;
+
+        font-size: 10px;
+
+    }
+
+
+    .result-label {
+
+        font-size: 7px;
+
+    }
+
+
+    .result-distance {
+
+        font-size: 9px;
+
+    }
+
+
+    .map-legend {
+
+        left: 8px;
+
+        bottom: 12px;
+
+        min-width: 185px;
+
+        padding: 8px 9px;
+
+    }
+
+
+    .legend-item {
+
+        font-size: 10px;
+
+    }
+
+
+    .zoom-button {
+
+        right: 8px;
+
+        bottom: 12px;
+
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+
+    .title-area {
+
+        display: none;
+
+    }
+
+
+    .search-area {
+
+        width: 100%;
+
+    }
+
+
+    .autocomplete-wrapper {
+
+        flex: 1;
+
+    }
+
+
+    #findButton {
+
+        padding:
+            0 11px;
 
     }
 
