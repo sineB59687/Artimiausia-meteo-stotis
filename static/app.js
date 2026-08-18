@@ -54,7 +54,7 @@ let windStationMarkers = [];
 
 
 // ============================================================
-// CURRENT LOCATION / STATIONS
+// CURRENT DATA
 // ============================================================
 
 let currentUserLocation = null;
@@ -67,7 +67,7 @@ let currentTertiary = null;
 
 
 // ============================================================
-// WIND FILTER
+// FILTER
 // ============================================================
 
 function windOnlyEnabled() {
@@ -101,7 +101,7 @@ function escapeHtml(value) {
 
 
 // ============================================================
-// CLEAR MAP
+// CLEAR MAP OBJECTS
 // ============================================================
 
 function clearMapObjects() {
@@ -177,7 +177,7 @@ function clearMapObjects() {
 
 
 // ============================================================
-// CREATE WIND STATION ICON
+// WIND STATION ICON
 // ============================================================
 
 const windStationIcon =
@@ -202,7 +202,7 @@ const windStationIcon =
 
 
 // ============================================================
-// UPDATE RESULT CARDS
+// UPDATE RESULTS
 // ============================================================
 
 function updateResults(
@@ -217,10 +217,6 @@ function updateResults(
 
 ) {
 
-
-    // ========================================================
-    // PRIMARY
-    // ========================================================
 
     document.getElementById(
         "primaryName"
@@ -244,10 +240,6 @@ function updateResults(
             : "";
 
 
-    // ========================================================
-    // SECONDARY
-    // ========================================================
-
     document.getElementById(
         "secondaryName"
     ).textContent =
@@ -269,10 +261,6 @@ function updateResults(
 
             : "";
 
-
-    // ========================================================
-    // TERTIARY
-    // ========================================================
 
     document.getElementById(
         "tertiaryName"
@@ -296,10 +284,6 @@ function updateResults(
             : "";
 
 
-    // ========================================================
-    // STATUS
-    // ========================================================
-
     document.getElementById(
         "status"
     ).textContent =
@@ -317,7 +301,9 @@ function displayWindStations(
     stations,
 
     primary,
+
     secondary,
+
     tertiary
 
 ) {
@@ -365,9 +351,6 @@ function displayWindStations(
         station => {
 
 
-            // Don't put the small background marker
-            // directly over the highlighted marker.
-
             if (
                 selectedCodes.has(
                     station.code
@@ -407,13 +390,11 @@ function displayWindStations(
                     station.name
                 )
                 + "</b>"
-                + "<br>"
-                + "Kodas: "
+                + "<br>Kodas: "
                 + escapeHtml(
                     station.code
                 )
-                + "<br>"
-                + "Atstumas nuo pasirinktos vietos: "
+                + "<br>Atstumas: "
                 + station.distance
                 + " km"
 
@@ -842,143 +823,6 @@ function displayStations(
 
 
 // ============================================================
-// SEARCH ADDRESS
-// ============================================================
-
-async function searchLocation() {
-
-
-    const input =
-        document.getElementById(
-            "locationInput"
-        );
-
-
-    const button =
-        document.getElementById(
-            "findButton"
-        );
-
-
-    const location =
-        input.value.trim();
-
-
-    if (!location) {
-
-        document.getElementById(
-            "status"
-        ).textContent =
-            "Įveskite vietovę.";
-
-        return;
-
-    }
-
-
-    button.disabled =
-        true;
-
-    button.textContent =
-        "Ieškoma...";
-
-
-    document.getElementById(
-        "status"
-    ).textContent =
-        "Ieškoma vietovės...";
-
-
-    try {
-
-
-        const response =
-            await fetch(
-
-                "/api/location",
-
-                {
-
-                    method:
-                        "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json"
-
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            location:
-                                location
-
-                        })
-
-                }
-
-            );
-
-
-        const result =
-            await response.json();
-
-
-        if (!response.ok || !result.success) {
-
-            throw new Error(
-
-                result.error
-                ||
-                "Vietovė nerasta."
-
-            );
-
-        }
-
-
-        await findStations(
-
-            result.latitude,
-
-            result.longitude,
-
-            result.name
-
-        );
-
-
-    }
-
-
-    catch (error) {
-
-        console.error(error);
-
-        document.getElementById(
-            "status"
-        ).textContent =
-            error.message;
-
-    }
-
-
-    finally {
-
-        button.disabled =
-            false;
-
-        button.textContent =
-            "Ieškoti stočių";
-
-    }
-
-}
-
-
-// ============================================================
 // FIND STATIONS
 // ============================================================
 
@@ -1000,7 +844,6 @@ async function findStations(
 
 
     try {
-
 
         const response =
             await fetch(
@@ -1042,7 +885,10 @@ async function findStations(
             await response.json();
 
 
-        if (!response.ok || !result.success) {
+        if (
+            !response.ok ||
+            !result.success
+        ) {
 
             throw new Error(
 
@@ -1093,15 +939,187 @@ async function findStations(
 
     }
 
-
     catch (error) {
 
-        console.error(error);
+        console.error(
+            "Station search error:",
+            error
+        );
+
 
         document.getElementById(
             "status"
         ).textContent =
             error.message;
+
+    }
+
+}
+
+
+// ============================================================
+// SEARCH BY CITY / ADDRESS
+// ============================================================
+
+async function searchLocation() {
+
+
+    const input =
+        document.getElementById(
+            "locationInput"
+        );
+
+
+    const button =
+        document.getElementById(
+            "findButton"
+        );
+
+
+    const location =
+        input.value.trim();
+
+
+    if (!location) {
+
+        document.getElementById(
+            "status"
+        ).textContent =
+            "Įveskite vietovę.";
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    button.disabled =
+        true;
+
+    button.textContent =
+        "Ieškoma...";
+
+
+    document.getElementById(
+        "status"
+    ).textContent =
+        "Ieškoma vietovės...";
+
+
+    try {
+
+
+        // ====================================================
+        // GEOCODING REQUEST
+        // ====================================================
+
+        const response =
+            await fetch(
+
+                "/api/location",
+
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            location:
+                                location
+
+                        })
+
+                }
+
+            );
+
+
+        const result =
+            await response.json();
+
+
+        console.log(
+            "Geocoding response:",
+            result
+        );
+
+
+        if (
+            !response.ok ||
+            !result.success
+        ) {
+
+            throw new Error(
+
+                result.error
+                ||
+                "Vietovė nerasta."
+
+            );
+
+        }
+
+
+        // ====================================================
+        // LOCATION FOUND
+        // ====================================================
+
+        document.getElementById(
+            "status"
+        ).textContent =
+            "Vieta rasta. Ieškomos artimiausios stotys...";
+
+
+        // ====================================================
+        // FIND STATIONS
+        // ====================================================
+
+        await findStations(
+
+            result.latitude,
+
+            result.longitude,
+
+            result.name
+
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Location search error:",
+            error
+        );
+
+
+        document.getElementById(
+            "status"
+        ).textContent =
+            error.message;
+
+    }
+
+
+    finally {
+
+        button.disabled =
+            false;
+
+        button.textContent =
+            "Ieškoti stočių";
 
     }
 
@@ -1214,6 +1232,8 @@ document
                 event.key === "Enter"
             ) {
 
+                event.preventDefault();
+
                 searchLocation();
 
             }
@@ -1320,7 +1340,7 @@ document
 
 
 // ============================================================
-// FIX LEAFLET MAP SIZE
+// INITIAL MAP SIZE FIX
 // ============================================================
 
 setTimeout(

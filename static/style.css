@@ -26,16 +26,19 @@ body {
 
 body {
 
-    display: flex;
+    display:
+        flex;
 
-    flex-direction: column;
+    flex-direction:
+        column;
 
 }
 
 
 header {
 
-    background: white;
+    background:
+        white;
 
     border-bottom:
         1px solid #dddddd;
@@ -168,7 +171,8 @@ main {
         #3578d4;
 
     box-shadow:
-        0 0 0 2px rgba(
+        0 0 0 2px
+        rgba(
             53,
             120,
             212,
@@ -566,7 +570,8 @@ button:disabled {
         2px solid white;
 
     box-shadow:
-        0 1px 4px rgba(
+        0 1px 4px
+        rgba(
             0,
             0,
             0,
