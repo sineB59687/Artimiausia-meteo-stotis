@@ -1,112 +1,68 @@
-// ============================================================
-// MAP
-// ============================================================
+// Žemėlapis
 
-const map = L.map(
-    "map"
-).setView(
-
+const map = L.map("map").setView(
     [55.1694, 23.8813],
-
     7
-
 );
 
-
 L.tileLayer(
-
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-
     {
-
         maxZoom: 19,
-
-        attribution:
-            "&copy; OpenStreetMap contributors"
-
+        attribution: "&copy; OpenStreetMap contributors"
     }
-
 ).addTo(map);
 
 
-// ============================================================
-// MAP OBJECTS
-// ============================================================
+// Žemėlapio objektai
 
-let userMarker = null;
+let locationMarker = null;
+let nearestMarker = null;
+let secondNearestMarker = null;
+let thirdNearestMarker = null;
 
-let primaryMarker = null;
-
-let secondaryMarker = null;
-
-let tertiaryMarker = null;
-
-
-let primaryLine = null;
-
-let secondaryLine = null;
-
-let tertiaryLine = null;
-
+let nearestLine = null;
+let secondNearestLine = null;
+let thirdNearestLine = null;
 
 let windStationMarkers = [];
 
 
-// ============================================================
-// CURRENT DATA
-// ============================================================
+// Dabartiniai rezultatai
 
-let currentUserLocation = null;
-
-let currentPrimary = null;
-
-let currentSecondary = null;
-
-let currentTertiary = null;
+let currentLocation = null;
+let currentNearest = null;
+let currentSecond = null;
+let currentThird = null;
 
 
-// ============================================================
-// AUTOCOMPLETE
-// ============================================================
+// Vietovių paieška
 
 let autocompleteTimer = null;
-
 let autocompleteController = null;
-
 let autocompleteResults = [];
 
 
-// ============================================================
-// CUSTOM MAP ICONS
-// ============================================================
+// Žymeklių kūrimas
 
-function createMarkerIcon(
-
-    symbol,
-
-    className
-
-) {
+function createMarkerIcon(symbol, className) {
 
     return L.divIcon({
 
         className: "",
 
         html:
-            '<div class="station-marker '
-            + className
-            + '">'
-            + symbol
-            + "</div>",
+            '<div class="station-marker ' +
+            className +
+            '">' +
+            symbol +
+            "</div>",
 
-        iconSize:
-            [30, 30],
+        iconSize: [30, 30],
 
-        iconAnchor:
-            [15, 15],
+        iconAnchor: [15, 15],
 
-        popupAnchor:
-            [0, -17]
+        popupAnchor: [0, -17]
 
     });
 
@@ -120,30 +76,28 @@ const locationIcon =
     );
 
 
-const primaryIcon =
+const nearestIcon =
     createMarkerIcon(
         "★",
         "primary-marker"
     );
 
 
-const secondaryIcon =
+const secondNearestIcon =
     createMarkerIcon(
         "▲",
         "secondary-marker"
     );
 
 
-const tertiaryIcon =
+const thirdNearestIcon =
     createMarkerIcon(
         "■",
         "tertiary-marker"
     );
 
 
-// ============================================================
-// WIND STATION ICON
-// ============================================================
+// Vėjo stoties žymeklis
 
 const windStationIcon =
     L.divIcon({
@@ -151,27 +105,22 @@ const windStationIcon =
         className: "",
 
         html:
-            '<div class="wind-station-map-marker">'
-            + "•"
-            + "</div>",
+            '<div class="wind-station-map-marker">' +
+            "•" +
+            "</div>",
 
-        iconSize:
-            [18, 18],
+        iconSize: [18, 18],
 
-        iconAnchor:
-            [9, 9],
+        iconAnchor: [9, 9],
 
-        popupAnchor:
-            [0, -9]
+        popupAnchor: [0, -9]
 
     });
 
 
-// ============================================================
-// WIND FILTER
-// ============================================================
+// Tikriname vėjo filtrą
 
-function windOnlyEnabled() {
+function isWindOnlyEnabled() {
 
     return document.getElementById(
         "windOnly"
@@ -180,49 +129,42 @@ function windOnlyEnabled() {
 }
 
 
-// ============================================================
-// ESCAPE HTML
-// ============================================================
+// Apsaugome tekstą
 
 function escapeHtml(value) {
 
-    const div =
+    const element =
         document.createElement(
             "div"
         );
 
-
-    div.textContent =
+    element.textContent =
         value ?? "";
 
-
-    return div.innerHTML;
+    return element.innerHTML;
 
 }
 
 
-// ============================================================
-// CLEAR MAP OBJECTS
-// ============================================================
+// Išvalome žemėlapį
 
 function clearMapObjects() {
 
-
     const objects = [
 
-        userMarker,
+        locationMarker,
 
-        primaryMarker,
+        nearestMarker,
 
-        secondaryMarker,
+        secondNearestMarker,
 
-        tertiaryMarker,
+        thirdNearestMarker,
 
-        primaryLine,
+        nearestLine,
 
-        secondaryLine,
+        secondNearestLine,
 
-        tertiaryLine
+        thirdNearestLine
 
     ];
 
@@ -260,48 +202,38 @@ function clearMapObjects() {
     windStationMarkers = [];
 
 
-    userMarker = null;
+    locationMarker = null;
 
-    primaryMarker = null;
+    nearestMarker = null;
 
-    secondaryMarker = null;
+    secondNearestMarker = null;
 
-    tertiaryMarker = null;
+    thirdNearestMarker = null;
 
-    primaryLine = null;
+    nearestLine = null;
 
-    secondaryLine = null;
+    secondNearestLine = null;
 
-    tertiaryLine = null;
+    thirdNearestLine = null;
 
 }
 
 
-// ============================================================
-// UPDATE RESULT CARDS
-// ============================================================
+// Atnaujiname stočių informaciją
 
 function updateResults(
-
-    primary,
-
-    secondary,
-
-    tertiary,
-
-    statusText
-
+    first,
+    second,
+    third,
+    message
 ) {
-
 
     document.getElementById(
         "primaryName"
     ).textContent =
 
-        primary
-
-            ? primary.name
-
+        first
+            ? first.name
             : "Nėra";
 
 
@@ -309,10 +241,8 @@ function updateResults(
         "primaryDistance"
     ).textContent =
 
-        primary
-
-            ? primary.distance + " km"
-
+        first
+            ? first.distance + " km"
             : "";
 
 
@@ -320,10 +250,8 @@ function updateResults(
         "secondaryName"
     ).textContent =
 
-        secondary
-
-            ? secondary.name
-
+        second
+            ? second.name
             : "Nėra";
 
 
@@ -331,10 +259,8 @@ function updateResults(
         "secondaryDistance"
     ).textContent =
 
-        secondary
-
-            ? secondary.distance + " km"
-
+        second
+            ? second.distance + " km"
             : "";
 
 
@@ -342,10 +268,8 @@ function updateResults(
         "tertiaryName"
     ).textContent =
 
-        tertiary
-
-            ? tertiary.name
-
+        third
+            ? third.name
             : "Nėra";
 
 
@@ -353,39 +277,29 @@ function updateResults(
         "tertiaryDistance"
     ).textContent =
 
-        tertiary
-
-            ? tertiary.distance + " km"
-
+        third
+            ? third.distance + " km"
             : "";
 
 
     document.getElementById(
         "status"
     ).textContent =
-        statusText;
+        message;
 
 }
 
 
-// ============================================================
-// DISPLAY OTHER WIND STATIONS
-// ============================================================
+// Rodome kitas vėjo stotis
 
 function displayWindStations(
-
     stations,
-
-    primary,
-
-    secondary,
-
-    tertiary
-
+    first,
+    second,
+    third
 ) {
 
-
-    if (!windOnlyEnabled()) {
+    if (!isWindOnlyEnabled()) {
 
         return;
 
@@ -396,28 +310,28 @@ function displayWindStations(
         new Set();
 
 
-    if (primary) {
+    if (first) {
 
         selectedCodes.add(
-            primary.code
+            first.code
         );
 
     }
 
 
-    if (secondary) {
+    if (second) {
 
         selectedCodes.add(
-            secondary.code
+            second.code
         );
 
     }
 
 
-    if (tertiary) {
+    if (third) {
 
         selectedCodes.add(
-            tertiary.code
+            third.code
         );
 
     }
@@ -427,16 +341,10 @@ function displayWindStations(
 
         station => {
 
-
-            // Don't create a generic marker
-            // on top of the three selected stations.
-
             if (
-
                 selectedCodes.has(
                     station.code
                 )
-
             ) {
 
                 return;
@@ -448,18 +356,13 @@ function displayWindStations(
                 L.marker(
 
                     [
-
                         station.latitude,
-
                         station.longitude
-
                     ],
 
                     {
-
                         icon:
                             windStationIcon
-
                     }
 
                 ).addTo(map);
@@ -467,18 +370,23 @@ function displayWindStations(
 
             marker.bindPopup(
 
-                "<b>"
-                + escapeHtml(
+                "<b>" +
+                escapeHtml(
                     station.name
-                )
-                + "</b>"
-                + "<br>Kodas: "
-                + escapeHtml(
+                ) +
+                "</b>" +
+
+                "<br>Kodas: " +
+
+                escapeHtml(
                     station.code
-                )
-                + "<br>Atstumas: "
-                + station.distance
-                + " km"
+                ) +
+
+                "<br>Atstumas: " +
+
+                station.distance +
+
+                " km"
 
             );
 
@@ -494,33 +402,22 @@ function displayWindStations(
 }
 
 
-// ============================================================
-// DISPLAY SELECTED STATIONS
-// ============================================================
+// Rodome pasirinktas stotis
 
 function displayStations(
-
     latitude,
-
     longitude,
-
-    primary,
-
-    secondary,
-
-    tertiary,
-
+    first,
+    second,
+    third,
     locationName,
-
     mapStations
-
 ) {
-
 
     clearMapObjects();
 
 
-    currentUserLocation = {
+    currentLocation = {
 
         latitude:
             latitude,
@@ -531,14 +428,14 @@ function displayStations(
     };
 
 
-    currentPrimary =
-        primary;
+    currentNearest =
+        first;
 
-    currentSecondary =
-        secondary;
+    currentSecond =
+        second;
 
-    currentTertiary =
-        tertiary;
+    currentThird =
+        third;
 
 
     document.getElementById(
@@ -546,119 +443,105 @@ function displayStations(
     ).disabled = false;
 
 
-    // ========================================================
-    // USER LOCATION
-    // ========================================================
+    // Pasirinkta vieta
 
-    userMarker =
+    locationMarker =
         L.marker(
 
             [
-
                 latitude,
-
                 longitude
-
             ],
 
             {
-
                 icon:
                     locationIcon
-
             }
 
         ).addTo(map);
 
 
-    userMarker.bindPopup(
+    locationMarker.bindPopup(
 
-        "<b>Pasirinkta vieta</b>"
-        + "<br>"
-        + escapeHtml(
+        "<b>Pasirinkta vieta</b>" +
+
+        "<br>" +
+
+        escapeHtml(
             locationName
         )
 
     );
 
 
-    // ========================================================
-    // PRIMARY STATION
-    // ========================================================
+    // Pirma stotis
 
-    if (primary) {
+    if (first) {
 
-
-        primaryMarker =
+        nearestMarker =
             L.marker(
 
                 [
-
-                    primary.latitude,
-
-                    primary.longitude
-
+                    first.latitude,
+                    first.longitude
                 ],
 
                 {
-
                     icon:
-                        primaryIcon
-
+                        nearestIcon
                 }
 
             ).addTo(map);
 
 
-        primaryMarker.bindPopup(
+        nearestMarker.bindPopup(
 
-            "<b>Pagrindinė stotis</b>"
-            + "<br>"
-            + escapeHtml(
-                primary.name
-            )
-            + "<br>Kodas: "
-            + escapeHtml(
-                primary.code
-            )
-            + "<br>Atstumas: "
-            + primary.distance
-            + " km"
+            "<b>Artimiausia stotis</b>" +
+
+            "<br>" +
+
+            escapeHtml(
+                first.name
+            ) +
+
+            "<br>Kodas: " +
+
+            escapeHtml(
+                first.code
+            ) +
+
+            "<br>Atstumas: " +
+
+            first.distance +
+
+            " km"
 
         );
 
 
-        primaryLine =
+        nearestLine =
             L.polyline(
 
                 [
 
                     [
-
                         latitude,
-
                         longitude
-
                     ],
 
                     [
-
-                        primary.latitude,
-
-                        primary.longitude
-
+                        first.latitude,
+                        first.longitude
                     ]
 
                 ],
 
                 {
-
                     color:
                         "#d94a45",
 
                     weight:
                         3
-
                 }
 
             ).addTo(map);
@@ -666,77 +549,69 @@ function displayStations(
     }
 
 
-    // ========================================================
-    // SECONDARY STATION
-    // ========================================================
+    // Antra stotis
 
-    if (secondary) {
+    if (second) {
 
-
-        secondaryMarker =
+        secondNearestMarker =
             L.marker(
 
                 [
-
-                    secondary.latitude,
-
-                    secondary.longitude
-
+                    second.latitude,
+                    second.longitude
                 ],
 
                 {
-
                     icon:
-                        secondaryIcon
-
+                        secondNearestIcon
                 }
 
             ).addTo(map);
 
 
-        secondaryMarker.bindPopup(
+        secondNearestMarker.bindPopup(
 
-            "<b>Antroji stotis</b>"
-            + "<br>"
-            + escapeHtml(
-                secondary.name
-            )
-            + "<br>Kodas: "
-            + escapeHtml(
-                secondary.code
-            )
-            + "<br>Atstumas: "
-            + secondary.distance
-            + " km"
+            "<b>Antroji stotis</b>" +
+
+            "<br>" +
+
+            escapeHtml(
+                second.name
+            ) +
+
+            "<br>Kodas: " +
+
+            escapeHtml(
+                second.code
+            ) +
+
+            "<br>Atstumas: " +
+
+            second.distance +
+
+            " km"
 
         );
 
 
-        secondaryLine =
+        secondNearestLine =
             L.polyline(
 
                 [
 
                     [
-
                         latitude,
-
                         longitude
-
                     ],
 
                     [
-
-                        secondary.latitude,
-
-                        secondary.longitude
-
+                        second.latitude,
+                        second.longitude
                     ]
 
                 ],
 
                 {
-
                     color:
                         "#ed9d2f",
 
@@ -745,7 +620,6 @@ function displayStations(
 
                     dashArray:
                         "8,8"
-
                 }
 
             ).addTo(map);
@@ -753,77 +627,69 @@ function displayStations(
     }
 
 
-    // ========================================================
-    // TERTIARY STATION
-    // ========================================================
+    // Trečia stotis
 
-    if (tertiary) {
+    if (third) {
 
-
-        tertiaryMarker =
+        thirdNearestMarker =
             L.marker(
 
                 [
-
-                    tertiary.latitude,
-
-                    tertiary.longitude
-
+                    third.latitude,
+                    third.longitude
                 ],
 
                 {
-
                     icon:
-                        tertiaryIcon
-
+                        thirdNearestIcon
                 }
 
             ).addTo(map);
 
 
-        tertiaryMarker.bindPopup(
+        thirdNearestMarker.bindPopup(
 
-            "<b>Trečioji stotis</b>"
-            + "<br>"
-            + escapeHtml(
-                tertiary.name
-            )
-            + "<br>Kodas: "
-            + escapeHtml(
-                tertiary.code
-            )
-            + "<br>Atstumas: "
-            + tertiary.distance
-            + " km"
+            "<b>Trečioji stotis</b>" +
+
+            "<br>" +
+
+            escapeHtml(
+                third.name
+            ) +
+
+            "<br>Kodas: " +
+
+            escapeHtml(
+                third.code
+            ) +
+
+            "<br>Atstumas: " +
+
+            third.distance +
+
+            " km"
 
         );
 
 
-        tertiaryLine =
+        thirdNearestLine =
             L.polyline(
 
                 [
 
                     [
-
                         latitude,
-
                         longitude
-
                     ],
 
                     [
-
-                        tertiary.latitude,
-
-                        tertiary.longitude
-
+                        third.latitude,
+                        third.longitude
                     ]
 
                 ],
 
                 {
-
                     color:
                         "#c7ae00",
 
@@ -832,7 +698,6 @@ function displayStations(
 
                     dashArray:
                         "3,8"
-
                 }
 
             ).addTo(map);
@@ -840,39 +705,28 @@ function displayStations(
     }
 
 
-    // ========================================================
-    // OTHER WIND STATIONS
-    // ========================================================
-
     displayWindStations(
 
         mapStations || [],
 
-        primary,
+        first,
 
-        secondary,
+        second,
 
-        tertiary
+        third
 
     );
 
 }
 
 
-// ============================================================
-// FIND STATIONS
-// ============================================================
+// Ieškome stočių pagal koordinates
 
 async function findStations(
-
     latitude,
-
     longitude,
-
     locationName
-
 ) {
-
 
     document.getElementById(
         "status"
@@ -909,7 +763,7 @@ async function findStations(
                                 longitude,
 
                             wind_only:
-                                windOnlyEnabled()
+                                isWindOnlyEnabled()
 
                         })
 
@@ -923,16 +777,13 @@ async function findStations(
 
 
         if (
-
             !response.ok ||
             !result.success
-
         ) {
 
             throw new Error(
 
-                result.error
-                ||
+                result.error ||
                 "Nepavyko gauti stočių."
 
             );
@@ -948,7 +799,7 @@ async function findStations(
 
             result.tertiary,
 
-            windOnlyEnabled()
+            isWindOnlyEnabled()
 
                 ? "Rodomos tik vėjo duomenis teikiančios stotys"
 
@@ -981,8 +832,11 @@ async function findStations(
     catch (error) {
 
         console.error(
-            "Station search error:",
+
+            "Stočių paieškos klaida:",
+
             error
+
         );
 
 
@@ -996,9 +850,7 @@ async function findStations(
 }
 
 
-// ============================================================
-// CLEAR AUTOCOMPLETE
-// ============================================================
+// Išvalome vietovių pasiūlymus
 
 function clearAutocomplete() {
 
@@ -1013,14 +865,13 @@ function clearAutocomplete() {
     container.style.display =
         "none";
 
+
     autocompleteResults = [];
 
 }
 
 
-// ============================================================
-// SHOW AUTOCOMPLETE LOADING
-// ============================================================
+// Rodome paieškos laukimą
 
 function showAutocompleteLoading() {
 
@@ -1031,9 +882,12 @@ function showAutocompleteLoading() {
 
 
     container.innerHTML =
-        '<div class="autocomplete-loading">'
-        + "Ieškoma..."
-        + "</div>";
+
+        '<div class="autocomplete-loading">' +
+
+        "Ieškoma..." +
+
+        "</div>";
 
 
     container.style.display =
@@ -1042,16 +896,11 @@ function showAutocompleteLoading() {
 }
 
 
-// ============================================================
-// DISPLAY AUTOCOMPLETE RESULTS
-// ============================================================
+// Rodome vietovių pasiūlymus
 
 function displayAutocompleteResults(
-
     results
-
 ) {
-
 
     const container =
         document.getElementById(
@@ -1060,7 +909,6 @@ function displayAutocompleteResults(
 
 
     container.innerHTML = "";
-
 
     autocompleteResults =
         results;
@@ -1080,7 +928,6 @@ function displayAutocompleteResults(
 
         (result, index) => {
 
-
             const item =
                 document.createElement(
                     "div"
@@ -1093,19 +940,21 @@ function displayAutocompleteResults(
 
             item.innerHTML =
 
-                '<div class="autocomplete-name">'
-                + escapeHtml(
+                '<div class="autocomplete-name">' +
+
+                escapeHtml(
                     result.name
-                )
-                + "</div>"
+                ) +
 
-                +
+                "</div>" +
 
-                '<div class="autocomplete-address">'
-                + escapeHtml(
+                '<div class="autocomplete-address">' +
+
+                escapeHtml(
                     result.formatted
-                )
-                + "</div>";
+                ) +
+
+                "</div>";
 
 
             item.addEventListener(
@@ -1140,16 +989,11 @@ function displayAutocompleteResults(
 }
 
 
-// ============================================================
-// SELECT AUTOCOMPLETE RESULT
-// ============================================================
+// Pasirenkame vietovę
 
 function selectAutocompleteResult(
-
     index
-
 ) {
-
 
     const result =
         autocompleteResults[index];
@@ -1175,8 +1019,7 @@ function selectAutocompleteResult(
     clearAutocomplete();
 
 
-    // Geoapify already returned the coordinates.
-    // Therefore there is NO second geocoding request.
+    // Koordinates jau gautos iš Geoapify
 
     findStations(
 
@@ -1191,16 +1034,11 @@ function selectAutocompleteResult(
 }
 
 
-// ============================================================
-// REQUEST AUTOCOMPLETE
-// ============================================================
+// Vietovių pasiūlymų užklausa
 
 async function requestAutocomplete(
-
     text
-
 ) {
-
 
     if (autocompleteController) {
 
@@ -1221,8 +1059,8 @@ async function requestAutocomplete(
         const response =
             await fetch(
 
-                "/api/autocomplete?text="
-                +
+                "/api/autocomplete?text=" +
+
                 encodeURIComponent(
                     text
                 ),
@@ -1245,10 +1083,8 @@ async function requestAutocomplete(
 
 
         if (
-
             !response.ok ||
             !result.success
-
         ) {
 
             clearAutocomplete();
@@ -1264,21 +1100,24 @@ async function requestAutocomplete(
 
         );
 
+
     }
 
     catch (error) {
 
         if (
-
             error.name !==
             "AbortError"
-
         ) {
 
             console.error(
-                "Autocomplete error:",
+
+                "Vietovių paieškos klaida:",
+
                 error
+
             );
+
 
             clearAutocomplete();
 
@@ -1289,9 +1128,7 @@ async function requestAutocomplete(
 }
 
 
-// ============================================================
-// INPUT / AUTOCOMPLETE
-// ============================================================
+// Paieškos laukelio įvestis
 
 document
     .getElementById(
@@ -1302,7 +1139,6 @@ document
         "input",
 
         function() {
-
 
             const text =
                 this.value.trim();
@@ -1342,9 +1178,7 @@ document
     );
 
 
-// ============================================================
-// SEARCH BY ENTER
-// ============================================================
+// Paieška paspaudus Enter
 
 document
     .getElementById(
@@ -1355,7 +1189,6 @@ document
         "keydown",
 
         function(event) {
-
 
             if (
                 event.key === "Enter"
@@ -1374,9 +1207,7 @@ document
     );
 
 
-// ============================================================
-// SEARCH BUTTON
-// ============================================================
+// Paieškos mygtukas
 
 document
     .getElementById(
@@ -1397,12 +1228,9 @@ document
     );
 
 
-// ============================================================
-// DIRECT LOCATION SEARCH
-// ============================================================
+// Ieškome įvestos vietovės
 
 async function searchLocation() {
-
 
     const input =
         document.getElementById(
@@ -1484,16 +1312,13 @@ async function searchLocation() {
 
 
         if (
-
             !response.ok ||
             !result.success
-
         ) {
 
             throw new Error(
 
-                result.error
-                ||
+                result.error ||
                 "Vietovė nerasta."
 
             );
@@ -1517,8 +1342,11 @@ async function searchLocation() {
     catch (error) {
 
         console.error(
-            "Location search error:",
+
+            "Vietovės paieškos klaida:",
+
             error
+
         );
 
 
@@ -1543,9 +1371,7 @@ async function searchLocation() {
 }
 
 
-// ============================================================
-// CLOSE AUTOCOMPLETE WHEN CLICKING OUTSIDE
-// ============================================================
+// Uždaryti pasiūlymus paspaudus kitur
 
 document.addEventListener(
 
@@ -1553,15 +1379,14 @@ document.addEventListener(
 
     function(event) {
 
-
-        const wrapper =
+        const searchBox =
             document.querySelector(
                 ".autocomplete-wrapper"
             );
 
 
         if (
-            !wrapper.contains(
+            !searchBox.contains(
                 event.target
             )
         ) {
@@ -1575,16 +1400,13 @@ document.addEventListener(
 );
 
 
-// ============================================================
-// MAP CLICK
-// ============================================================
+// Paieška paspaudus žemėlapį
 
 map.on(
 
     "click",
 
     async function(event) {
-
 
         const latitude =
             event.latlng.lat;
@@ -1612,9 +1434,7 @@ map.on(
 );
 
 
-// ============================================================
-// WIND FILTER
-// ============================================================
+// Vėjo filtravimas
 
 document
     .getElementById(
@@ -1626,8 +1446,7 @@ document
 
         async function() {
 
-
-            if (!currentUserLocation) {
+            if (!currentLocation) {
 
                 return;
 
@@ -1636,9 +1455,9 @@ document
 
             await findStations(
 
-                currentUserLocation.latitude,
+                currentLocation.latitude,
 
-                currentUserLocation.longitude,
+                currentLocation.longitude,
 
                 "Žemėlapyje pasirinkta vieta"
 
@@ -1649,9 +1468,7 @@ document
     );
 
 
-// ============================================================
-// ZOOM BUTTON
-// ============================================================
+// Priartinimo mygtukas
 
 document
     .getElementById(
@@ -1663,12 +1480,9 @@ document
 
         function() {
 
-
             if (
-
-                !currentUserLocation ||
-                !currentPrimary
-
+                !currentLocation ||
+                !currentNearest
             ) {
 
                 return;
@@ -1679,44 +1493,36 @@ document
             const points = [
 
                 [
-
-                    currentUserLocation.latitude,
-
-                    currentUserLocation.longitude
-
+                    currentLocation.latitude,
+                    currentLocation.longitude
                 ],
 
                 [
-
-                    currentPrimary.latitude,
-
-                    currentPrimary.longitude
-
+                    currentNearest.latitude,
+                    currentNearest.longitude
                 ]
 
             ];
 
 
-            if (currentSecondary) {
+            if (currentSecond) {
 
                 points.push([
 
-                    currentSecondary.latitude,
-
-                    currentSecondary.longitude
+                    currentSecond.latitude,
+                    currentSecond.longitude
 
                 ]);
 
             }
 
 
-            if (currentTertiary) {
+            if (currentThird) {
 
                 points.push([
 
-                    currentTertiary.latitude,
-
-                    currentTertiary.longitude
+                    currentThird.latitude,
+                    currentThird.longitude
 
                 ]);
 
@@ -1734,10 +1540,8 @@ document
                 bounds,
 
                 {
-
                     padding:
                         [70, 70]
-
                 }
 
             );
@@ -1747,9 +1551,7 @@ document
     );
 
 
-// ============================================================
-// INITIAL MAP SIZE
-// ============================================================
+// Užtikriname tinkamą žemėlapio dydį
 
 setTimeout(
 
