@@ -21,6 +21,7 @@
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     >
 
+
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
@@ -32,17 +33,28 @@
 <body>
 
 
-    <!-- ==================================================
-         HEADER
-         ================================================== -->
+<header>
 
-    <header>
+    <div class="header-content">
 
-        <h1>
-            Meteorologijos stoties paieška
-        </h1>
+        <div>
 
-    </header>
+            <h1>
+                Meteorologijos stoties paieška
+            </h1>
+
+            <p>
+                Raskite artimiausias meteorologijos stotis
+            </p>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<main>
 
 
     <!-- ==================================================
@@ -51,21 +63,33 @@
 
     <section class="search-area">
 
-        <label for="locationInput">
-            Vietovė:
-        </label>
+        <div class="search-label">
+
+            <label for="locationInput">
+                Vietovė
+            </label>
+
+        </div>
 
 
-        <input
-            id="locationInput"
-            type="text"
-            placeholder="Įveskite miestą arba adresą..."
-        >
+        <div class="search-controls">
+
+            <input
+                id="locationInput"
+                type="text"
+                autocomplete="off"
+                placeholder="Įveskite miestą arba adresą..."
+            >
 
 
-        <button id="findButton">
-            Ieškoti stočių
-        </button>
+            <button
+                id="findButton"
+                type="button"
+            >
+                Ieškoti stočių
+            </button>
+
+        </div>
 
     </section>
 
@@ -76,16 +100,25 @@
 
     <section class="filter-area">
 
-        <label>
+        <label class="filter-label">
 
             <input
-                type="checkbox"
                 id="windOnly"
+                type="checkbox"
             >
 
-            Tik stotys, teikiančios vėjo duomenis
+            <span>
+                Tik stotys, teikiančios vėjo duomenis
+            </span>
 
         </label>
+
+
+        <span class="filter-info">
+
+            Filtruojamos pagal stoties stebėjimų programą
+
+        </span>
 
     </section>
 
@@ -96,9 +129,18 @@
 
     <section class="instruction">
 
-        Įveskite vietovę arba spustelėkite bet kurią
-        vietą žemėlapyje, kad rastumėte tris
-        artimiausias meteorologijos stotis.
+        <span>
+
+            Įveskite vietovę arba spustelėkite
+            bet kurią vietą žemėlapyje.
+
+        </span>
+
+        <span>
+
+            Bus parodytos trys artimiausios stotys.
+
+        </span>
 
     </section>
 
@@ -110,90 +152,128 @@
     <section class="results">
 
 
-        <div class="station primary">
+        <div class="station-card primary">
 
-            <div class="station-title">
-                PAGRINDINĖ STOTIS
+            <div class="station-number">
+                1
             </div>
 
-            <div
-                id="primaryName"
-                class="station-name"
-            >
-                -
-            </div>
 
-            <div
-                id="primaryDistance"
-                class="station-distance"
-            >
-                -
-            </div>
+            <div class="station-content">
 
-        </div>
+                <div class="station-title">
+                    PAGRINDINĖ STOTIS
+                </div>
 
 
-        <div class="station secondary">
+                <div
+                    id="primaryName"
+                    class="station-name"
+                >
+                    -
+                </div>
 
-            <div class="station-title">
-                ANTROJI STOTIS
-            </div>
 
-            <div
-                id="secondaryName"
-                class="station-name"
-            >
-                -
-            </div>
+                <div
+                    id="primaryDistance"
+                    class="station-distance"
+                >
+                    -
+                </div>
 
-            <div
-                id="secondaryDistance"
-                class="station-distance"
-            >
-                -
             </div>
 
         </div>
 
 
-        <div class="station tertiary">
+        <div class="station-card secondary">
 
-            <div class="station-title">
-                TREČIOJI STOTIS
+            <div class="station-number">
+                2
             </div>
 
-            <div
-                id="tertiaryName"
-                class="station-name"
-            >
-                -
-            </div>
 
-            <div
-                id="tertiaryDistance"
-                class="station-distance"
-            >
-                -
+            <div class="station-content">
+
+                <div class="station-title">
+                    ANTROJI STOTIS
+                </div>
+
+
+                <div
+                    id="secondaryName"
+                    class="station-name"
+                >
+                    -
+                </div>
+
+
+                <div
+                    id="secondaryDistance"
+                    class="station-distance"
+                >
+                    -
+                </div>
+
             </div>
 
         </div>
 
 
-        <div id="status">
+        <div class="station-card tertiary">
+
+            <div class="station-number">
+                3
+            </div>
+
+
+            <div class="station-content">
+
+                <div class="station-title">
+                    TREČIOJI STOTIS
+                </div>
+
+
+                <div
+                    id="tertiaryName"
+                    class="station-name"
+                >
+                    -
+                </div>
+
+
+                <div
+                    id="tertiaryDistance"
+                    class="station-distance"
+                >
+                    -
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="status"
+            class="status"
+        >
             Pasirinkite vietovę
         </div>
+
 
     </section>
 
 
     <!-- ==================================================
-         ZOOM
+         MAP CONTROLS
          ================================================== -->
 
-    <section class="zoom-area">
+    <section class="map-controls">
 
         <button
             id="zoomButton"
+            type="button"
             disabled
         >
             Priartinti
@@ -209,18 +289,24 @@
     <div id="map"></div>
 
 
-    <!-- ==================================================
-         LEAFLET
-         ================================================== -->
-
-    <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    ></script>
+</main>
 
 
-    <script
-        src="{{ url_for('static', filename='app.js') }}"
-    ></script>
+<footer>
+
+    Meteorologijos stoties paieška
+
+</footer>
+
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+
+<script
+    src="{{ url_for('static', filename='app.js') }}"
+></script>
 
 
 </body>

@@ -19,7 +19,8 @@ L.tileLayer(
 
     {
 
-        maxZoom: 19,
+        maxZoom:
+            19,
 
         attribution:
             "&copy; OpenStreetMap contributors"
@@ -30,7 +31,7 @@ L.tileLayer(
 
 
 // ============================================================
-// CURRENT MAP OBJECTS
+// MAP OBJECTS
 // ============================================================
 
 let userMarker = null;
@@ -49,8 +50,11 @@ let secondaryLine = null;
 let tertiaryLine = null;
 
 
+let windStationMarkers = [];
+
+
 // ============================================================
-// CURRENT LOCATIONS
+// CURRENT LOCATION / STATIONS
 // ============================================================
 
 let currentUserLocation = null;
@@ -63,7 +67,7 @@ let currentTertiary = null;
 
 
 // ============================================================
-// FILTER
+// WIND FILTER
 // ============================================================
 
 function windOnlyEnabled() {
@@ -76,10 +80,32 @@ function windOnlyEnabled() {
 
 
 // ============================================================
+// ESCAPE HTML
+// ============================================================
+
+function escapeHtml(value) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        value ?? "";
+
+
+    return div.innerHTML;
+
+}
+
+
+// ============================================================
 // CLEAR MAP
 // ============================================================
 
 function clearMapObjects() {
+
 
     const objects = [
 
@@ -101,6 +127,7 @@ function clearMapObjects() {
 
 
     objects.forEach(
+
         object => {
 
             if (object) {
@@ -112,7 +139,24 @@ function clearMapObjects() {
             }
 
         }
+
     );
+
+
+    windStationMarkers.forEach(
+
+        marker => {
+
+            map.removeLayer(
+                marker
+            );
+
+        }
+
+    );
+
+
+    windStationMarkers = [];
 
 
     userMarker = null;
@@ -133,27 +177,59 @@ function clearMapObjects() {
 
 
 // ============================================================
-// UPDATE RESULTS
+// CREATE WIND STATION ICON
+// ============================================================
+
+const windStationIcon =
+    L.divIcon({
+
+        className:
+            "",
+
+        html:
+            '<div class="wind-station-marker"></div>',
+
+        iconSize:
+            [12, 12],
+
+        iconAnchor:
+            [6, 6],
+
+        popupAnchor:
+            [0, -6]
+
+    });
+
+
+// ============================================================
+// UPDATE RESULT CARDS
 // ============================================================
 
 function updateResults(
 
     primary,
+
     secondary,
+
     tertiary,
+
     statusText
 
 ) {
 
 
-    // Primary
+    // ========================================================
+    // PRIMARY
+    // ========================================================
 
     document.getElementById(
         "primaryName"
     ).textContent =
 
         primary
+
             ? primary.name
+
             : "Nėra";
 
 
@@ -162,18 +238,24 @@ function updateResults(
     ).textContent =
 
         primary
+
             ? primary.distance + " km"
+
             : "";
 
 
-    // Secondary
+    // ========================================================
+    // SECONDARY
+    // ========================================================
 
     document.getElementById(
         "secondaryName"
     ).textContent =
 
         secondary
+
             ? secondary.name
+
             : "Nėra";
 
 
@@ -182,18 +264,24 @@ function updateResults(
     ).textContent =
 
         secondary
+
             ? secondary.distance + " km"
+
             : "";
 
 
-    // Tertiary
+    // ========================================================
+    // TERTIARY
+    // ========================================================
 
     document.getElementById(
         "tertiaryName"
     ).textContent =
 
         tertiary
+
             ? tertiary.name
+
             : "Nėra";
 
 
@@ -202,9 +290,15 @@ function updateResults(
     ).textContent =
 
         tertiary
+
             ? tertiary.distance + " km"
+
             : "";
 
+
+    // ========================================================
+    // STATUS
+    // ========================================================
 
     document.getElementById(
         "status"
@@ -215,17 +309,147 @@ function updateResults(
 
 
 // ============================================================
-// DISPLAY STATIONS
+// DISPLAY ALL WIND STATIONS
+// ============================================================
+
+function displayWindStations(
+
+    stations,
+
+    primary,
+    secondary,
+    tertiary
+
+) {
+
+
+    if (!windOnlyEnabled()) {
+
+        return;
+
+    }
+
+
+    const selectedCodes = new Set();
+
+
+    if (primary) {
+
+        selectedCodes.add(
+            primary.code
+        );
+
+    }
+
+
+    if (secondary) {
+
+        selectedCodes.add(
+            secondary.code
+        );
+
+    }
+
+
+    if (tertiary) {
+
+        selectedCodes.add(
+            tertiary.code
+        );
+
+    }
+
+
+    stations.forEach(
+
+        station => {
+
+
+            // Don't put the small background marker
+            // directly over the highlighted marker.
+
+            if (
+                selectedCodes.has(
+                    station.code
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            const marker =
+                L.marker(
+
+                    [
+
+                        station.latitude,
+
+                        station.longitude
+
+                    ],
+
+                    {
+
+                        icon:
+                            windStationIcon
+
+                    }
+
+                ).addTo(map);
+
+
+            marker.bindPopup(
+
+                "<b>"
+                + escapeHtml(
+                    station.name
+                )
+                + "</b>"
+                + "<br>"
+                + "Kodas: "
+                + escapeHtml(
+                    station.code
+                )
+                + "<br>"
+                + "Atstumas nuo pasirinktos vietos: "
+                + station.distance
+                + " km"
+
+            );
+
+
+            windStationMarkers.push(
+                marker
+            );
+
+        }
+
+    );
+
+}
+
+
+// ============================================================
+// DISPLAY SELECTED STATIONS
 // ============================================================
 
 function displayStations(
 
     latitude,
+
     longitude,
+
     primary,
+
     secondary,
+
     tertiary,
-    locationName
+
+    locationName,
+
+    mapStations
 
 ) {
 
@@ -260,28 +484,36 @@ function displayStations(
 
 
     // ========================================================
-    // SELECTED LOCATION
+    // USER LOCATION
     // ========================================================
 
     userMarker =
         L.circleMarker(
 
             [
+
                 latitude,
+
                 longitude
+
             ],
 
             {
 
-                radius: 8,
+                radius:
+                    8,
 
-                color: "#ffffff",
+                color:
+                    "#ffffff",
 
-                weight: 2,
+                weight:
+                    2,
 
-                fillColor: "#3578d4",
+                fillColor:
+                    "#3578d4",
 
-                fillOpacity: 1
+                fillOpacity:
+                    1
 
             }
 
@@ -290,8 +522,11 @@ function displayStations(
 
     userMarker.bindPopup(
 
-        "<b>Pasirinkta vieta</b><br>"
-        + locationName
+        "<b>Pasirinkta vieta</b>"
+        + "<br>"
+        + escapeHtml(
+            locationName
+        )
 
     );
 
@@ -315,15 +550,20 @@ function displayStations(
 
                 {
 
-                    radius: 9,
+                    radius:
+                        10,
 
-                    color: "#ffffff",
+                    color:
+                        "#ffffff",
 
-                    weight: 2,
+                    weight:
+                        2,
 
-                    fillColor: "#d9534f",
+                    fillColor:
+                        "#d9534f",
 
-                    fillOpacity: 1
+                    fillOpacity:
+                        1
 
                 }
 
@@ -332,10 +572,15 @@ function displayStations(
 
         primaryMarker.bindPopup(
 
-            "<b>Pagrindinė stotis</b><br>"
-            + primary.name
+            "<b>Pagrindinė stotis</b>"
+            + "<br>"
+            + escapeHtml(
+                primary.name
+            )
             + "<br>Kodas: "
-            + primary.code
+            + escapeHtml(
+                primary.code
+            )
             + "<br>Atstumas: "
             + primary.distance
             + " km"
@@ -349,13 +594,19 @@ function displayStations(
                 [
 
                     [
+
                         latitude,
+
                         longitude
+
                     ],
 
                     [
+
                         primary.latitude,
+
                         primary.longitude
+
                     ]
 
                 ],
@@ -394,15 +645,20 @@ function displayStations(
 
                 {
 
-                    radius: 8,
+                    radius:
+                        9,
 
-                    color: "#ffffff",
+                    color:
+                        "#ffffff",
 
-                    weight: 2,
+                    weight:
+                        2,
 
-                    fillColor: "#f0ad4e",
+                    fillColor:
+                        "#f0ad4e",
 
-                    fillOpacity: 1
+                    fillOpacity:
+                        1
 
                 }
 
@@ -411,10 +667,15 @@ function displayStations(
 
         secondaryMarker.bindPopup(
 
-            "<b>Antroji stotis</b><br>"
-            + secondary.name
+            "<b>Antroji stotis</b>"
+            + "<br>"
+            + escapeHtml(
+                secondary.name
+            )
             + "<br>Kodas: "
-            + secondary.code
+            + escapeHtml(
+                secondary.code
+            )
             + "<br>Atstumas: "
             + secondary.distance
             + " km"
@@ -428,13 +689,19 @@ function displayStations(
                 [
 
                     [
+
                         latitude,
+
                         longitude
+
                     ],
 
                     [
+
                         secondary.latitude,
+
                         secondary.longitude
+
                     ]
 
                 ],
@@ -448,7 +715,7 @@ function displayStations(
                         3,
 
                     dashArray:
-                        "8, 8"
+                        "8,8"
 
                 }
 
@@ -476,15 +743,20 @@ function displayStations(
 
                 {
 
-                    radius: 8,
+                    radius:
+                        9,
 
-                    color: "#ffffff",
+                    color:
+                        "#ffffff",
 
-                    weight: 2,
+                    weight:
+                        2,
 
-                    fillColor: "#f7d154",
+                    fillColor:
+                        "#f7d154",
 
-                    fillOpacity: 1
+                    fillOpacity:
+                        1
 
                 }
 
@@ -493,10 +765,15 @@ function displayStations(
 
         tertiaryMarker.bindPopup(
 
-            "<b>Trečioji stotis</b><br>"
-            + tertiary.name
+            "<b>Trečioji stotis</b>"
+            + "<br>"
+            + escapeHtml(
+                tertiary.name
+            )
             + "<br>Kodas: "
-            + tertiary.code
+            + escapeHtml(
+                tertiary.code
+            )
             + "<br>Atstumas: "
             + tertiary.distance
             + " km"
@@ -510,13 +787,19 @@ function displayStations(
                 [
 
                     [
+
                         latitude,
+
                         longitude
+
                     ],
 
                     [
+
                         tertiary.latitude,
+
                         tertiary.longitude
+
                     ]
 
                 ],
@@ -530,7 +813,7 @@ function displayStations(
                         3,
 
                     dashArray:
-                        "3, 8"
+                        "3,8"
 
                 }
 
@@ -538,11 +821,28 @@ function displayStations(
 
     }
 
+
+    // ========================================================
+    // ALL WIND STATIONS
+    // ========================================================
+
+    displayWindStations(
+
+        mapStations || [],
+
+        primary,
+
+        secondary,
+
+        tertiary
+
+    );
+
 }
 
 
 // ============================================================
-// SEARCH LOCATION
+// SEARCH ADDRESS
 // ============================================================
 
 async function searchLocation() {
@@ -576,7 +876,8 @@ async function searchLocation() {
     }
 
 
-    button.disabled = true;
+    button.disabled =
+        true;
 
     button.textContent =
         "Ieškoma...";
@@ -591,11 +892,7 @@ async function searchLocation() {
     try {
 
 
-        // ====================================================
-        // GEOCODING
-        // ====================================================
-
-        const locationResponse =
+        const response =
             await fetch(
 
                 "/api/location",
@@ -625,33 +922,30 @@ async function searchLocation() {
             );
 
 
-        const locationResult =
-            await locationResponse.json();
+        const result =
+            await response.json();
 
 
-        if (!locationResult.success) {
+        if (!response.ok || !result.success) {
 
-            document.getElementById(
-                "status"
-            ).textContent =
-                locationResult.error;
+            throw new Error(
 
-            return;
+                result.error
+                ||
+                "Vietovė nerasta."
+
+            );
 
         }
 
 
-        // ====================================================
-        // FIND STATIONS
-        // ====================================================
-
         await findStations(
 
-            locationResult.latitude,
+            result.latitude,
 
-            locationResult.longitude,
+            result.longitude,
 
-            locationResult.name
+            result.name
 
         );
 
@@ -666,7 +960,7 @@ async function searchLocation() {
         document.getElementById(
             "status"
         ).textContent =
-            "Įvyko klaida.";
+            error.message;
 
     }
 
@@ -691,7 +985,9 @@ async function searchLocation() {
 async function findStations(
 
     latitude,
+
     longitude,
+
     locationName
 
 ) {
@@ -746,14 +1042,15 @@ async function findStations(
             await response.json();
 
 
-        if (!result.success) {
+        if (!response.ok || !result.success) {
 
-            document.getElementById(
-                "status"
-            ).textContent =
-                result.error;
+            throw new Error(
 
-            return;
+                result.error
+                ||
+                "Nepavyko gauti stočių."
+
+            );
 
         }
 
@@ -770,7 +1067,7 @@ async function findStations(
 
                 ? "Rodomos tik vėjo duomenis teikiančios stotys"
 
-                : "Vieta rasta"
+                : "Rodomos artimiausios stotys"
 
         );
 
@@ -787,9 +1084,12 @@ async function findStations(
 
             result.tertiary,
 
-            locationName
+            locationName,
+
+            result.map_stations
 
         );
+
 
     }
 
@@ -801,7 +1101,7 @@ async function findStations(
         document.getElementById(
             "status"
         ).textContent =
-            "Nepavyko gauti stočių duomenų.";
+            error.message;
 
     }
 
@@ -996,7 +1296,9 @@ document
 
 
             const bounds =
-                L.latLngBounds(points);
+                L.latLngBounds(
+                    points
+                );
 
 
             map.fitBounds(
@@ -1006,7 +1308,7 @@ document
                 {
 
                     padding:
-                        [50, 50]
+                        [60, 60]
 
                 }
 
@@ -1015,3 +1317,20 @@ document
         }
 
     );
+
+
+// ============================================================
+// FIX LEAFLET MAP SIZE
+// ============================================================
+
+setTimeout(
+
+    function() {
+
+        map.invalidateSize();
+
+    },
+
+    300
+
+);

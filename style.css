@@ -3,31 +3,39 @@
 }
 
 
+html,
 body {
 
     margin: 0;
+
+    padding: 0;
+
+    height: 100%;
 
     font-family:
         Arial,
         Helvetica,
         sans-serif;
 
-    background:
-        #f4f6f8;
+    color: #222;
 
-    color:
-        #222;
+    background: #f4f6f8;
+
+}
+
+
+body {
+
+    display: flex;
+
+    flex-direction: column;
 
 }
 
 
 header {
 
-    background:
-        white;
-
-    padding:
-        18px 25px;
+    background: white;
 
     border-bottom:
         1px solid #dddddd;
@@ -35,9 +43,24 @@ header {
 }
 
 
+.header-content {
+
+    max-width:
+        1600px;
+
+    margin:
+        0 auto;
+
+    padding:
+        16px 25px;
+
+}
+
+
 header h1 {
 
-    margin: 0;
+    margin:
+        0;
 
     font-size:
         22px;
@@ -45,22 +68,70 @@ header h1 {
 }
 
 
+header p {
+
+    margin:
+        4px 0 0;
+
+    color:
+        #777;
+
+    font-size:
+        13px;
+
+}
+
+
+main {
+
+    flex:
+        1;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    min-height:
+        0;
+
+}
+
+
+/* ==========================================================
+   SEARCH
+   ========================================================== */
+
 .search-area {
 
     background:
         white;
 
     padding:
-        15px 25px;
+        14px 25px;
 
     border-bottom:
         1px solid #dddddd;
 
+}
+
+
+.search-label {
+
+    font-weight:
+        bold;
+
+    margin-bottom:
+        6px;
+
+}
+
+
+.search-controls {
+
     display:
         flex;
-
-    align-items:
-        center;
 
     gap:
         10px;
@@ -68,21 +139,10 @@ header h1 {
 }
 
 
-.search-area label {
-
-    font-weight:
-        bold;
-
-}
-
-
 #locationInput {
 
-    flex:
-        1;
-
-    max-width:
-        500px;
+    width:
+        min(600px, 100%);
 
     padding:
         10px 12px;
@@ -96,16 +156,29 @@ header h1 {
     border-radius:
         5px;
 
+    outline:
+        none;
+
+}
+
+
+#locationInput:focus {
+
+    border-color:
+        #3578d4;
+
+    box-shadow:
+        0 0 0 2px rgba(
+            53,
+            120,
+            212,
+            0.12
+        );
+
 }
 
 
 button {
-
-    padding:
-        10px 20px;
-
-    font-size:
-        15px;
 
     border:
         none;
@@ -113,11 +186,17 @@ button {
     border-radius:
         5px;
 
+    padding:
+        10px 20px;
+
     background:
         #3578d4;
 
     color:
         white;
+
+    font-size:
+        14px;
 
     cursor:
         pointer;
@@ -144,21 +223,34 @@ button:disabled {
 }
 
 
+/* ==========================================================
+   FILTER
+   ========================================================== */
+
 .filter-area {
 
     background:
         white;
 
     padding:
-        10px 25px;
+        9px 25px;
 
     border-bottom:
         1px solid #dddddd;
 
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+
 }
 
 
-.filter-area label {
+.filter-label {
 
     display:
         flex;
@@ -172,6 +264,9 @@ button:disabled {
     cursor:
         pointer;
 
+    font-size:
+        14px;
+
 }
 
 
@@ -183,8 +278,26 @@ button:disabled {
     height:
         17px;
 
+    cursor:
+        pointer;
+
 }
 
+
+.filter-info {
+
+    color:
+        #888;
+
+    font-size:
+        12px;
+
+}
+
+
+/* ==========================================================
+   INSTRUCTION
+   ========================================================== */
 
 .instruction {
 
@@ -192,27 +305,7 @@ button:disabled {
         white;
 
     padding:
-        8px 25px;
-
-    border-bottom:
-        1px solid #dddddd;
-
-    color:
-        #666;
-
-    font-size:
-        13px;
-
-}
-
-
-.results {
-
-    background:
-        white;
-
-    padding:
-        12px 25px;
+        7px 25px;
 
     border-bottom:
         1px solid #dddddd;
@@ -221,26 +314,71 @@ button:disabled {
         flex;
 
     gap:
-        30px;
+        5px;
+
+    color:
+        #666;
+
+    font-size:
+        12px;
+
+}
+
+
+/* ==========================================================
+   RESULTS
+   ========================================================== */
+
+.results {
+
+    background:
+        white;
+
+    padding:
+        10px 25px;
+
+    border-bottom:
+        1px solid #dddddd;
+
+    display:
+        flex;
+
+    align-items:
+        stretch;
+
+    gap:
+        12px;
+
+}
+
+
+.station-card {
+
+    display:
+        flex;
 
     align-items:
         center;
 
-}
+    min-width:
+        210px;
 
-
-.station {
-
-    padding-left:
-        12px;
+    padding:
+        8px 12px;
 
     border-left:
         4px solid;
 
+    border-radius:
+        3px;
+
+    background:
+        #fafafa;
+
 }
 
 
-.primary {
+.station-card.primary {
 
     border-color:
         #d9534f;
@@ -248,7 +386,7 @@ button:disabled {
 }
 
 
-.secondary {
+.station-card.secondary {
 
     border-color:
         #f0ad4e;
@@ -256,7 +394,7 @@ button:disabled {
 }
 
 
-.tertiary {
+.station-card.tertiary {
 
     border-color:
         #f7d154;
@@ -264,69 +402,123 @@ button:disabled {
 }
 
 
-.station-title {
+.station-number {
+
+    width:
+        26px;
+
+    height:
+        26px;
+
+    border-radius:
+        50%;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    margin-right:
+        9px;
+
+    background:
+        #777;
+
+    color:
+        white;
 
     font-size:
         12px;
 
+    font-weight:
+        bold;
+
+}
+
+
+.station-title {
+
     color:
         #777;
+
+    font-size:
+        10px;
+
+    font-weight:
+        bold;
 
 }
 
 
 .station-name {
 
-    font-weight:
-        bold;
+    margin-top:
+        2px;
 
     font-size:
-        15px;
+        14px;
 
-    margin-top:
-        3px;
+    font-weight:
+        bold;
 
 }
 
 
 .station-distance {
 
-    font-size:
-        13px;
+    margin-top:
+        2px;
 
     color:
         #555;
 
-    margin-top:
-        3px;
+    font-size:
+        12px;
 
 }
 
 
-#status {
+.status {
 
     margin-left:
         auto;
+
+    display:
+        flex;
+
+    align-items:
+        center;
 
     color:
         #777;
 
     font-size:
-        13px;
+        12px;
+
+    text-align:
+        right;
 
 }
 
 
-.zoom-area {
+/* ==========================================================
+   MAP CONTROLS
+   ========================================================== */
+
+.map-controls {
 
     background:
         white;
 
     padding:
-        8px;
+        6px;
 
     border-bottom:
-        1px solid #ddd;
+        1px solid #dddddd;
 
     text-align:
         center;
@@ -334,64 +526,214 @@ button:disabled {
 }
 
 
-#zoomButton {
-
-    padding:
-        7px 20px;
-
-    font-size:
-        13px;
-
-}
-
+/* ==========================================================
+   MAP
+   ========================================================== */
 
 #map {
+
+    flex:
+        1;
+
+    min-height:
+        400px;
 
     width:
         100%;
 
+}
+
+
+/* ==========================================================
+   WIND STATION MARKERS
+   ========================================================== */
+
+.wind-station-marker {
+
+    width:
+        12px;
+
     height:
-        calc(100vh - 305px);
+        12px;
+
+    border-radius:
+        50%;
+
+    background:
+        #3578d4;
+
+    border:
+        2px solid white;
+
+    box-shadow:
+        0 1px 4px rgba(
+            0,
+            0,
+            0,
+            0.5
+        );
 
 }
 
 
-@media (max-width: 800px) {
+/* ==========================================================
+   FOOTER
+   ========================================================== */
+
+footer {
+
+    background:
+        white;
+
+    border-top:
+        1px solid #dddddd;
+
+    padding:
+        5px 15px;
+
+    text-align:
+        center;
+
+    color:
+        #999;
+
+    font-size:
+        10px;
+
+}
+
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media (max-width: 900px) {
+
 
     .search-area {
 
-        flex-wrap:
-            wrap;
+        padding:
+            12px 15px;
+
+    }
+
+
+    .search-controls {
+
+        flex-direction:
+            column;
 
     }
 
 
     #locationInput {
 
-        max-width:
-            none;
-
         width:
             100%;
+
+    }
+
+
+    .filter-area {
+
+        padding:
+            9px 15px;
+
+    }
+
+
+    .filter-info {
+
+        display:
+            none;
+
+    }
+
+
+    .instruction {
+
+        padding:
+            7px 15px;
+
+        flex-direction:
+            column;
 
     }
 
 
     .results {
 
-        flex-wrap:
-            wrap;
+        padding:
+            8px 15px;
+
+        display:
+            grid;
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        gap:
+            6px;
 
     }
 
 
-    #status {
+    .station-card {
 
-        width:
-            100%;
-
-        margin-left:
+        min-width:
             0;
+
+        padding:
+            6px;
+
+    }
+
+
+    .station-number {
+
+        display:
+            none;
+
+    }
+
+
+    .station-name {
+
+        font-size:
+            12px;
+
+    }
+
+
+    .station-distance {
+
+        font-size:
+            11px;
+
+    }
+
+
+    .status {
+
+        grid-column:
+            1 / -1;
+
+        margin:
+            0;
+
+        justify-content:
+            center;
+
+        text-align:
+            center;
+
+    }
+
+
+    #map {
+
+        min-height:
+            450px;
 
     }
 
