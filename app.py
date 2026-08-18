@@ -20,10 +20,13 @@ GEOAPIFY_AUTOCOMPLETE_API = (
     "https://api.geoapify.com/v1/geocode/autocomplete"
 )
 
+GEOAPIFY_SEARCH_API = (
+    "https://api.geoapify.com/v1/geocode/search"
+)
+
 GEOAPIFY_API_KEY = os.environ.get(
     "GEOAPIFY_API_KEY"
 )
-
 
 CACHE_DURATION = timedelta(minutes=15)
 
@@ -141,23 +144,16 @@ MANUAL_STATIONS = [
 
 
 # ============================================================
-# STATION CACHE
+# CACHES
 # ============================================================
 
 station_cache = {
-
     "stations": None,
-
     "timestamp": None
-
 }
 
 station_cache_lock = Lock()
 
-
-# ============================================================
-# AUTOCOMPLETE CACHE
-# ============================================================
 
 autocomplete_cache = {}
 
@@ -179,14 +175,12 @@ def check_rate_limit():
 
     now = time.time()
 
-
     with rate_limit_lock:
 
         timestamps = request_history.get(
             ip,
             []
         )
-
 
         timestamps = [
 
@@ -198,34 +192,28 @@ def check_rate_limit():
 
         ]
 
-
         if len(timestamps) >= REQUEST_LIMIT:
 
             request_history[ip] = timestamps
 
             return False
 
-
         timestamps.append(now)
 
         request_history[ip] = timestamps
-
 
     return True
 
 
 # ============================================================
-# LOAD METEO.LT STATIONS
+# LOAD STATIONS
 # ============================================================
 
 def load_stations():
 
     now = datetime.utcnow()
 
-
-    # ========================================================
-    # CHECK CACHE
-    # ========================================================
+    # Check cache
 
     with station_cache_lock:
 
@@ -242,10 +230,6 @@ def load_stations():
 
             return station_cache["stations"]
 
-
-    # ========================================================
-    # DOWNLOAD STATIONS
-    # ========================================================
 
     try:
 
@@ -264,11 +248,9 @@ def load_stations():
 
         )
 
-
         response.raise_for_status()
 
         data = response.json()
-
 
         stations = []
 
@@ -276,13 +258,9 @@ def load_stations():
         for station in data:
 
             coordinates = station.get(
-
                 "coordinates",
-
                 {}
-
             )
-
 
             latitude = coordinates.get(
                 "latitude"
@@ -291,7 +269,6 @@ def load_stations():
             longitude = coordinates.get(
                 "longitude"
             )
-
 
             if latitude is None or longitude is None:
 
@@ -302,7 +279,6 @@ def load_stations():
                 "code",
                 ""
             )
-
 
             name = station.get(
                 "name",
@@ -339,18 +315,14 @@ def load_stations():
             })
 
 
-        # ====================================================
-        # ADD MANUAL STATIONS
-        # ====================================================
+        # Add manually entered stations
 
         stations.extend(
             MANUAL_STATIONS
         )
 
 
-        # ====================================================
-        # SAVE CACHE
-        # ====================================================
+        # Save cache
 
         with station_cache_lock:
 
@@ -382,7 +354,7 @@ def load_stations():
 
 
 # ============================================================
-# CALCULATE NEAREST STATIONS
+# FIND NEAREST STATIONS
 # ============================================================
 
 def calculate_nearest_stations(
@@ -398,9 +370,7 @@ def calculate_nearest_stations(
     stations = load_stations()
 
 
-    # ========================================================
-    # FILTER WIND STATIONS
-    # ========================================================
+    # Filter wind stations
 
     if wind_only:
 
@@ -441,10 +411,6 @@ def calculate_nearest_stations(
 
     stations_with_distance = []
 
-
-    # ========================================================
-    # CALCULATE DISTANCES
-    # ========================================================
 
     for station in stations:
 
@@ -495,9 +461,7 @@ def calculate_nearest_stations(
         })
 
 
-    # ========================================================
-    # SORT BY DISTANCE
-    # ========================================================
+    # Sort by distance
 
     stations_with_distance.sort(
 
@@ -507,9 +471,7 @@ def calculate_nearest_stations(
     )
 
 
-    # ========================================================
-    # THREE NEAREST
-    # ========================================================
+    # Three nearest
 
     primary = (
 
@@ -544,9 +506,7 @@ def calculate_nearest_stations(
     )
 
 
-    # ========================================================
-    # MAP STATIONS
-    # ========================================================
+    # Other wind stations displayed on map
 
     if wind_only:
 
@@ -616,8 +576,6 @@ def autocomplete():
     ).strip()
 
 
-    # Don't search extremely short inputs
-
     if len(text) < 2:
 
         return jsonify({
@@ -628,10 +586,6 @@ def autocomplete():
 
         })
 
-
-    # ========================================================
-    # CHECK API KEY
-    # ========================================================
 
     if not GEOAPIFY_API_KEY:
 
@@ -650,9 +604,7 @@ def autocomplete():
         }), 500
 
 
-    # ========================================================
-    # CACHE
-    # ========================================================
+    # Check cache
 
     cache_key = text.lower()
 
@@ -675,10 +627,6 @@ def autocomplete():
 
         })
 
-
-    # ========================================================
-    # GEOAPIFY REQUEST
-    # ========================================================
 
     try:
 
@@ -713,10 +661,6 @@ def autocomplete():
         )
 
 
-        # ====================================================
-        # HANDLE API ERRORS
-        # ====================================================
-
         if response.status_code == 401:
 
             print(
@@ -736,11 +680,6 @@ def autocomplete():
 
         if response.status_code == 429:
 
-            print(
-                "Geoapify rate limit reached."
-            )
-
-
             return jsonify({
 
                 "success": False,
@@ -753,16 +692,10 @@ def autocomplete():
 
         response.raise_for_status()
 
-
         data = response.json()
-
 
         results = []
 
-
-        # ====================================================
-        # PROCESS RESULTS
-        # ====================================================
 
         for result in data.get(
             "results",
@@ -795,7 +728,11 @@ def autocomplete():
 
             if not name:
 
-                name = formatted or "Nežinoma vieta"
+                name = (
+                    formatted
+                    or
+                    "Nežinoma vieta"
+                )
 
 
             if not formatted:
@@ -820,13 +757,13 @@ def autocomplete():
             })
 
 
-        # ====================================================
-        # CACHE
-        # ====================================================
+        # Save cache
 
         with autocomplete_cache_lock:
 
-            autocomplete_cache[cache_key] = results
+            autocomplete_cache[
+                cache_key
+            ] = results
 
 
         return jsonify({
@@ -875,11 +812,6 @@ def autocomplete():
 
 # ============================================================
 # DIRECT LOCATION SEARCH
-# ============================================================
-#
-# This is used when the user presses Enter without selecting
-# an autocomplete suggestion.
-#
 # ============================================================
 
 @app.route(
@@ -941,7 +873,7 @@ def location():
 
         response = requests.get(
 
-            "https://api.geoapify.com/v1/geocode/search",
+            GEOAPIFY_SEARCH_API,
 
             params={
 
@@ -996,9 +928,7 @@ def location():
 
         response.raise_for_status()
 
-
         data = response.json()
-
 
         results = data.get(
             "results",
@@ -1119,10 +1049,6 @@ def stations():
     )
 
 
-    # ========================================================
-    # VALIDATE
-    # ========================================================
-
     try:
 
         latitude = float(
@@ -1172,10 +1098,6 @@ def stations():
         }), 400
 
 
-    # ========================================================
-    # CALCULATE
-    # ========================================================
-
     result = calculate_nearest_stations(
 
         latitude,
@@ -1187,7 +1109,9 @@ def stations():
     )
 
 
-    return jsonify(result)
+    return jsonify(
+        result
+    )
 
 
 # ============================================================
