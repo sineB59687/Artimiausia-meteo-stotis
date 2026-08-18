@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html lang="lt">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Meteorologijos stoties paieška
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- ==================================================
+         HEADER
+         ================================================== -->
+
+    <header>
+
+        <h1>
+            Meteorologijos stoties paieška
+        </h1>
+
+    </header>
+
+
+    <!-- ==================================================
+         SEARCH
+         ================================================== -->
+
+    <section class="search-area">
+
+        <label for="locationInput">
+            Vietovė:
+        </label>
+
+
+        <input
+            id="locationInput"
+            type="text"
+            placeholder="Įveskite miestą arba adresą..."
+        >
+
+
+        <button id="findButton">
+            Ieškoti stočių
+        </button>
+
+    </section>
+
+
+    <!-- ==================================================
+         FILTER
+         ================================================== -->
+
+    <section class="filter-area">
+
+        <label>
+
+            <input
+                type="checkbox"
+                id="windOnly"
+            >
+
+            Tik stotys, teikiančios vėjo duomenis
+
+        </label>
+
+    </section>
+
+
+    <!-- ==================================================
+         INSTRUCTION
+         ================================================== -->
+
+    <section class="instruction">
+
+        Įveskite vietovę arba spustelėkite bet kurią
+        vietą žemėlapyje, kad rastumėte tris
+        artimiausias meteorologijos stotis.
+
+    </section>
+
+
+    <!-- ==================================================
+         RESULTS
+         ================================================== -->
+
+    <section class="results">
+
+
+        <div class="station primary">
+
+            <div class="station-title">
+                PAGRINDINĖ STOTIS
+            </div>
+
+            <div
+                id="primaryName"
+                class="station-name"
+            >
+                -
+            </div>
+
+            <div
+                id="primaryDistance"
+                class="station-distance"
+            >
+                -
+            </div>
+
+        </div>
+
+
+        <div class="station secondary">
+
+            <div class="station-title">
+                ANTROJI STOTIS
+            </div>
+
+            <div
+                id="secondaryName"
+                class="station-name"
+            >
+                -
+            </div>
+
+            <div
+                id="secondaryDistance"
+                class="station-distance"
+            >
+                -
+            </div>
+
+        </div>
+
+
+        <div class="station tertiary">
+
+            <div class="station-title">
+                TREČIOJI STOTIS
+            </div>
+
+            <div
+                id="tertiaryName"
+                class="station-name"
+            >
+                -
+            </div>
+
+            <div
+                id="tertiaryDistance"
+                class="station-distance"
+            >
+                -
+            </div>
+
+        </div>
+
+
+        <div id="status">
+            Pasirinkite vietovę
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         ZOOM
+         ================================================== -->
+
+    <section class="zoom-area">
+
+        <button
+            id="zoomButton"
+            disabled
+        >
+            Priartinti
+        </button>
+
+    </section>
+
+
+    <!-- ==================================================
+         MAP
+         ================================================== -->
+
+    <div id="map"></div>
+
+
+    <!-- ==================================================
+         LEAFLET
+         ================================================== -->
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    ></script>
+
+
+    <script
+        src="{{ url_for('static', filename='app.js') }}"
+    ></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,398 @@
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin: 0;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        #f4f6f8;
+
+    color:
+        #222;
+
+}
+
+
+header {
+
+    background:
+        white;
+
+    padding:
+        18px 25px;
+
+    border-bottom:
+        1px solid #dddddd;
+
+}
+
+
+header h1 {
+
+    margin: 0;
+
+    font-size:
+        22px;
+
+}
+
+
+.search-area {
+
+    background:
+        white;
+
+    padding:
+        15px 25px;
+
+    border-bottom:
+        1px solid #dddddd;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+}
+
+
+.search-area label {
+
+    font-weight:
+        bold;
+
+}
+
+
+#locationInput {
+
+    flex:
+        1;
+
+    max-width:
+        500px;
+
+    padding:
+        10px 12px;
+
+    font-size:
+        15px;
+
+    border:
+        1px solid #cccccc;
+
+    border-radius:
+        5px;
+
+}
+
+
+button {
+
+    padding:
+        10px 20px;
+
+    font-size:
+        15px;
+
+    border:
+        none;
+
+    border-radius:
+        5px;
+
+    background:
+        #3578d4;
+
+    color:
+        white;
+
+    cursor:
+        pointer;
+
+}
+
+
+button:hover {
+
+    background:
+        #2865b5;
+
+}
+
+
+button:disabled {
+
+    background:
+        #999999;
+
+    cursor:
+        default;
+
+}
+
+
+.filter-area {
+
+    background:
+        white;
+
+    padding:
+        10px 25px;
+
+    border-bottom:
+        1px solid #dddddd;
+
+}
+
+
+.filter-area label {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    cursor:
+        pointer;
+
+}
+
+
+#windOnly {
+
+    width:
+        17px;
+
+    height:
+        17px;
+
+}
+
+
+.instruction {
+
+    background:
+        white;
+
+    padding:
+        8px 25px;
+
+    border-bottom:
+        1px solid #dddddd;
+
+    color:
+        #666;
+
+    font-size:
+        13px;
+
+}
+
+
+.results {
+
+    background:
+        white;
+
+    padding:
+        12px 25px;
+
+    border-bottom:
+        1px solid #dddddd;
+
+    display:
+        flex;
+
+    gap:
+        30px;
+
+    align-items:
+        center;
+
+}
+
+
+.station {
+
+    padding-left:
+        12px;
+
+    border-left:
+        4px solid;
+
+}
+
+
+.primary {
+
+    border-color:
+        #d9534f;
+
+}
+
+
+.secondary {
+
+    border-color:
+        #f0ad4e;
+
+}
+
+
+.tertiary {
+
+    border-color:
+        #f7d154;
+
+}
+
+
+.station-title {
+
+    font-size:
+        12px;
+
+    color:
+        #777;
+
+}
+
+
+.station-name {
+
+    font-weight:
+        bold;
+
+    font-size:
+        15px;
+
+    margin-top:
+        3px;
+
+}
+
+
+.station-distance {
+
+    font-size:
+        13px;
+
+    color:
+        #555;
+
+    margin-top:
+        3px;
+
+}
+
+
+#status {
+
+    margin-left:
+        auto;
+
+    color:
+        #777;
+
+    font-size:
+        13px;
+
+}
+
+
+.zoom-area {
+
+    background:
+        white;
+
+    padding:
+        8px;
+
+    border-bottom:
+        1px solid #ddd;
+
+    text-align:
+        center;
+
+}
+
+
+#zoomButton {
+
+    padding:
+        7px 20px;
+
+    font-size:
+        13px;
+
+}
+
+
+#map {
+
+    width:
+        100%;
+
+    height:
+        calc(100vh - 305px);
+
+}
+
+
+@media (max-width: 800px) {
+
+    .search-area {
+
+        flex-wrap:
+            wrap;
+
+    }
+
+
+    #locationInput {
+
+        max-width:
+            none;
+
+        width:
+            100%;
+
+    }
+
+
+    .results {
+
+        flex-wrap:
+            wrap;
+
+    }
+
+
+    #status {
+
+        width:
+            100%;
+
+        margin-left:
+            0;
+
+    }
+
+}
