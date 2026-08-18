@@ -1,10 +1,9 @@
 from flask import Flask, render_template, request, jsonify
 import requests
-from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
-from geopy.extra.rate_limiter import RateLimiter
 from datetime import datetime, timedelta
 from threading import Lock
+import os
 import time
 
 
@@ -17,18 +16,20 @@ app = Flask(__name__)
 
 STATIONS_API = "https://api.meteo.lt/v1/stations"
 
+GEOAPIFY_AUTOCOMPLETE_API = (
+    "https://api.geoapify.com/v1/geocode/autocomplete"
+)
+
+GEOAPIFY_API_KEY = os.environ.get(
+    "GEOAPIFY_API_KEY"
+)
+
+
 CACHE_DURATION = timedelta(minutes=15)
 
 REQUEST_LIMIT = 60
 
 REQUEST_WINDOW = 60
-
-# Nominatim public API limit:
-# maximum 1 request per second.
-#
-# We use 1.1 seconds to leave a small safety margin.
-
-NOMINATIM_DELAY = 1.1
 
 
 # ============================================================
@@ -151,58 +152,20 @@ station_cache = {
 
 }
 
-
 station_cache_lock = Lock()
 
 
 # ============================================================
-# GEOCODING CACHE
+# AUTOCOMPLETE CACHE
 # ============================================================
 
-geocode_cache = {}
+autocomplete_cache = {}
 
-geocode_cache_lock = Lock()
-
-
-# ============================================================
-# NOMINATIM
-# ============================================================
-#
-# IMPORTANT:
-# Create ONE geocoder for the application rather than creating
-# a new one for every search.
-#
-# RateLimiter makes sure requests are separated by at least
-# 1.1 seconds.
-#
-
-geolocator = Nominatim(
-
-    user_agent=
-        "ArtimiausiaMeteoStotis/1.0",
-
-    timeout=15
-
-)
-
-
-rate_limited_geocode = RateLimiter(
-
-    geolocator.geocode,
-
-    min_delay_seconds=NOMINATIM_DELAY,
-
-    max_retries=2,
-
-    error_wait_seconds=5,
-
-    swallow_exceptions=False
-
-)
+autocomplete_cache_lock = Lock()
 
 
 # ============================================================
-# RATE LIMITING FOR OUR OWN WEBSITE
+# RATE LIMITING
 # ============================================================
 
 request_history = {}
@@ -220,11 +183,8 @@ def check_rate_limit():
     with rate_limit_lock:
 
         timestamps = request_history.get(
-
             ip,
-
             []
-
         )
 
 
@@ -284,7 +244,7 @@ def load_stations():
 
 
     # ========================================================
-    # GET METEO.LT STATIONS
+    # DOWNLOAD STATIONS
     # ========================================================
 
     try:
@@ -339,20 +299,14 @@ def load_stations():
 
 
             code = station.get(
-
                 "code",
-
                 ""
-
             )
 
 
             name = station.get(
-
                 "name",
-
                 "Nežinoma stotis"
-
             )
 
 
@@ -390,9 +344,7 @@ def load_stations():
         # ====================================================
 
         stations.extend(
-
             MANUAL_STATIONS
-
         )
 
 
@@ -413,15 +365,11 @@ def load_stations():
     except Exception as error:
 
         print(
-
             f"Meteo.lt station error: {error}"
-
         )
 
 
-        # ====================================================
-        # USE PREVIOUS CACHE IF AVAILABLE
-        # ====================================================
+        # Use old cache if available
 
         with station_cache_lock:
 
@@ -429,10 +377,6 @@ def load_stations():
 
                 return station_cache["stations"]
 
-
-        # ====================================================
-        # FALLBACK
-        # ====================================================
 
         return MANUAL_STATIONS.copy()
 
@@ -455,7 +399,7 @@ def calculate_nearest_stations(
 
 
     # ========================================================
-    # WIND FILTER
+    # FILTER WIND STATIONS
     # ========================================================
 
     if wind_only:
@@ -467,11 +411,8 @@ def calculate_nearest_stations(
             for station in stations
 
             if station.get(
-
                 "wind_capable",
-
                 False
-
             )
 
         ]
@@ -481,8 +422,7 @@ def calculate_nearest_stations(
 
         return {
 
-            "success":
-                False,
+            "success": False,
 
             "error":
                 "Nerasta tinkamų meteorologijos stočių."
@@ -542,27 +482,21 @@ def calculate_nearest_stations(
 
             "distance":
                 round(
-
                     distance,
-
                     2
-
                 ),
 
             "wind_capable":
                 station.get(
-
                     "wind_capable",
-
                     False
-
                 )
 
         })
 
 
     # ========================================================
-    # SORT
+    # SORT BY DISTANCE
     # ========================================================
 
     stations_with_distance.sort(
@@ -611,16 +545,12 @@ def calculate_nearest_stations(
 
 
     # ========================================================
-    # ALL WIND STATIONS FOR MAP
+    # MAP STATIONS
     # ========================================================
 
     if wind_only:
 
-        map_stations = (
-
-            stations_with_distance
-
-        )
+        map_stations = stations_with_distance
 
     else:
 
@@ -629,8 +559,7 @@ def calculate_nearest_stations(
 
     return {
 
-        "success":
-            True,
+        "success": True,
 
         "primary":
             primary,
@@ -655,22 +584,307 @@ def calculate_nearest_stations(
 def index():
 
     return render_template(
-
         "index.html"
-
     )
 
 
 # ============================================================
-# LOCATION SEARCH
+# GEOAPIFY AUTOCOMPLETE
 # ============================================================
 
 @app.route(
+    "/api/autocomplete",
+    methods=["GET"]
+)
+def autocomplete():
 
+    if not check_rate_limit():
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Per daug užklausų. Palaukite minutę."
+
+        }), 429
+
+
+    text = request.args.get(
+        "text",
+        ""
+    ).strip()
+
+
+    # Don't search extremely short inputs
+
+    if len(text) < 2:
+
+        return jsonify({
+
+            "success": True,
+
+            "results": []
+
+        })
+
+
+    # ========================================================
+    # CHECK API KEY
+    # ========================================================
+
+    if not GEOAPIFY_API_KEY:
+
+        print(
+            "ERROR: GEOAPIFY_API_KEY is not configured."
+        )
+
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Geocoding API nėra sukonfigūruotas."
+
+        }), 500
+
+
+    # ========================================================
+    # CACHE
+    # ========================================================
+
+    cache_key = text.lower()
+
+
+    with autocomplete_cache_lock:
+
+        cached = autocomplete_cache.get(
+            cache_key
+        )
+
+
+    if cached is not None:
+
+        return jsonify({
+
+            "success": True,
+
+            "results":
+                cached
+
+        })
+
+
+    # ========================================================
+    # GEOAPIFY REQUEST
+    # ========================================================
+
+    try:
+
+        response = requests.get(
+
+            GEOAPIFY_AUTOCOMPLETE_API,
+
+            params={
+
+                "text":
+                    text,
+
+                "apiKey":
+                    GEOAPIFY_API_KEY,
+
+                "format":
+                    "json",
+
+                "limit":
+                    5,
+
+                "filter":
+                    "countrycode:lt",
+
+                "lang":
+                    "lt"
+
+            },
+
+            timeout=8
+
+        )
+
+
+        # ====================================================
+        # HANDLE API ERRORS
+        # ====================================================
+
+        if response.status_code == 401:
+
+            print(
+                "Geoapify API key rejected."
+            )
+
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "Geocoding API raktas neteisingas."
+
+            }), 500
+
+
+        if response.status_code == 429:
+
+            print(
+                "Geoapify rate limit reached."
+            )
+
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "Pasiektas vietovės paieškos limitas."
+
+            }), 429
+
+
+        response.raise_for_status()
+
+
+        data = response.json()
+
+
+        results = []
+
+
+        # ====================================================
+        # PROCESS RESULTS
+        # ====================================================
+
+        for result in data.get(
+            "results",
+            []
+        ):
+
+            latitude = result.get(
+                "lat"
+            )
+
+            longitude = result.get(
+                "lon"
+            )
+
+
+            if latitude is None or longitude is None:
+
+                continue
+
+
+            name = result.get(
+                "name"
+            )
+
+
+            formatted = result.get(
+                "formatted"
+            )
+
+
+            if not name:
+
+                name = formatted or "Nežinoma vieta"
+
+
+            if not formatted:
+
+                formatted = name
+
+
+            results.append({
+
+                "name":
+                    name,
+
+                "formatted":
+                    formatted,
+
+                "latitude":
+                    float(latitude),
+
+                "longitude":
+                    float(longitude)
+
+            })
+
+
+        # ====================================================
+        # CACHE
+        # ====================================================
+
+        with autocomplete_cache_lock:
+
+            autocomplete_cache[cache_key] = results
+
+
+        return jsonify({
+
+            "success": True,
+
+            "results":
+                results
+
+        })
+
+
+    except requests.exceptions.RequestException as error:
+
+        print(
+            f"Geoapify request error: {error}"
+        )
+
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Nepavyko atlikti vietovės paieškos."
+
+        }), 503
+
+
+    except Exception as error:
+
+        print(
+            f"Autocomplete error: {error}"
+        )
+
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Įvyko vietovės paieškos klaida."
+
+        }), 500
+
+
+# ============================================================
+# DIRECT LOCATION SEARCH
+# ============================================================
+#
+# This is used when the user presses Enter without selecting
+# an autocomplete suggestion.
+#
+# ============================================================
+
+@app.route(
     "/api/location",
-
     methods=["POST"]
-
 )
 def location():
 
@@ -678,33 +892,24 @@ def location():
 
         return jsonify({
 
-            "success":
-                False,
+            "success": False,
 
             "error":
-                "Per daug užklausų. "
-                "Palaukite minutę."
+                "Per daug užklausų. Palaukite minutę."
 
         }), 429
 
 
     data = request.get_json(
-
         silent=True
-
     ) or {}
 
 
     location_text = str(
-
         data.get(
-
             "location",
-
             ""
-
         )
-
     ).strip()
 
 
@@ -712,8 +917,7 @@ def location():
 
         return jsonify({
 
-            "success":
-                False,
+            "success": False,
 
             "error":
                 "Įveskite vietovę."
@@ -721,203 +925,155 @@ def location():
         }), 400
 
 
-    # ========================================================
-    # NORMALIZE CACHE KEY
-    # ========================================================
+    if not GEOAPIFY_API_KEY:
 
-    cache_key = (
+        return jsonify({
 
-        location_text
+            "success": False,
 
-        .lower()
+            "error":
+                "Geocoding API nėra sukonfigūruotas."
 
-        .strip()
+        }), 500
 
-    )
-
-
-    # ========================================================
-    # CHECK CACHE
-    # ========================================================
-
-    with geocode_cache_lock:
-
-        cached_result = (
-
-            geocode_cache.get(
-
-                cache_key
-
-            )
-
-        )
-
-
-    if cached_result is not None:
-
-        print(
-
-            f"Geocoding cache hit: "
-            f"{location_text}"
-
-        )
-
-
-        return jsonify(
-
-            cached_result
-
-        )
-
-
-    # ========================================================
-    # SEARCH QUERY
-    # ========================================================
-
-    search_query = location_text
-
-
-    if (
-
-        "lietuva"
-        not in location_text.lower()
-
-        and
-        "lithuania"
-        not in location_text.lower()
-
-    ):
-
-        search_query += ", Lithuania"
-
-
-    # ========================================================
-    # NOMINATIM REQUEST
-    # ========================================================
 
     try:
 
-        print(
+        response = requests.get(
 
-            f"Geocoding: "
-            f"{search_query}"
+            "https://api.geoapify.com/v1/geocode/search",
+
+            params={
+
+                "text":
+                    location_text,
+
+                "apiKey":
+                    GEOAPIFY_API_KEY,
+
+                "format":
+                    "json",
+
+                "limit":
+                    1,
+
+                "filter":
+                    "countrycode:lt",
+
+                "lang":
+                    "lt"
+
+            },
+
+            timeout=8
 
         )
 
 
-        location_result = (
+        if response.status_code == 401:
 
-            rate_limited_geocode(
+            return jsonify({
 
-                search_query,
-
-                exactly_one=True,
-
-                addressdetails=True,
-
-                language="lt",
-
-                country_codes="lt"
-
-            )
-
-        )
-
-
-        # ====================================================
-        # NO RESULT
-        # ====================================================
-
-        if location_result is None:
-
-            result = {
-
-                "success":
-                    False,
+                "success": False,
 
                 "error":
-                    f"Vietovė "
-                    f"„{location_text}“ "
-                    f"nerasta."
+                    "Geocoding API raktas neteisingas."
 
-            }
+            }), 500
 
 
-            return jsonify(
+        if response.status_code == 429:
 
-                result
+            return jsonify({
 
-            ), 404
+                "success": False,
+
+                "error":
+                    "Pasiektas vietovės paieškos limitas."
+
+            }), 429
 
 
-        # ====================================================
-        # SUCCESS
-        # ====================================================
+        response.raise_for_status()
 
-        result = {
 
-            "success":
-                True,
+        data = response.json()
+
+
+        results = data.get(
+            "results",
+            []
+        )
+
+
+        if not results:
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    f"Vietovė „{location_text}“ nerasta."
+
+            }), 404
+
+
+        result = results[0]
+
+
+        latitude = result.get(
+            "lat"
+        )
+
+        longitude = result.get(
+            "lon"
+        )
+
+
+        if latitude is None or longitude is None:
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "Vietovei nepavyko nustatyti koordinačių."
+
+            }), 404
+
+
+        return jsonify({
+
+            "success": True,
 
             "name":
-                location_result.address,
-
-            "latitude":
-                float(
-
-                    location_result.latitude
-
+                result.get(
+                    "formatted",
+                    location_text
                 ),
 
+            "latitude":
+                float(latitude),
+
             "longitude":
-                float(
+                float(longitude)
 
-                    location_result.longitude
-
-                )
-
-        }
-
-
-        # ====================================================
-        # SAVE RESULT TO CACHE
-        # ====================================================
-
-        with geocode_cache_lock:
-
-            geocode_cache[
-
-                cache_key
-
-            ] = result
-
-
-        return jsonify(
-
-            result
-
-        )
+        })
 
 
     except Exception as error:
 
         print(
-
-            f"Geocoding error: "
-            f"{error}"
-
+            f"Location search error: {error}"
         )
 
 
         return jsonify({
 
-            "success":
-                False,
+            "success": False,
 
             "error":
-                "Vietovės paieška šiuo metu "
-                "laikinai nepasiekiama. "
-                "Pabandykite dar kartą po kelių sekundžių."
+                "Nepavyko atlikti vietovės paieškos."
 
         }), 503
 
@@ -927,11 +1083,8 @@ def location():
 # ============================================================
 
 @app.route(
-
     "/api/stations",
-
     methods=["POST"]
-
 )
 def stations():
 
@@ -939,76 +1092,55 @@ def stations():
 
         return jsonify({
 
-            "success":
-                False,
+            "success": False,
 
             "error":
-                "Per daug užklausų. "
-                "Palaukite minutę."
+                "Per daug užklausų. Palaukite minutę."
 
         }), 429
 
 
     data = request.get_json(
-
         silent=True
-
     ) or {}
 
 
     latitude = data.get(
-
         "latitude"
-
     )
-
 
     longitude = data.get(
-
         "longitude"
-
     )
 
-
     wind_only = data.get(
-
         "wind_only",
-
         False
-
     )
 
 
     # ========================================================
-    # VALIDATE COORDINATES
+    # VALIDATE
     # ========================================================
 
     try:
 
         latitude = float(
-
             latitude
-
         )
 
         longitude = float(
-
             longitude
-
         )
 
     except (
-
         TypeError,
-
         ValueError
-
     ):
 
         return jsonify({
 
-            "success":
-                False,
+            "success": False,
 
             "error":
                 "Neteisingos koordinatės."
@@ -1020,8 +1152,7 @@ def stations():
 
         return jsonify({
 
-            "success":
-                False,
+            "success": False,
 
             "error":
                 "Neteisinga platuma."
@@ -1033,8 +1164,7 @@ def stations():
 
         return jsonify({
 
-            "success":
-                False,
+            "success": False,
 
             "error":
                 "Neteisinga ilguma."
@@ -1043,29 +1173,21 @@ def stations():
 
 
     # ========================================================
-    # FIND STATIONS
+    # CALCULATE
     # ========================================================
 
-    result = (
+    result = calculate_nearest_stations(
 
-        calculate_nearest_stations(
+        latitude,
 
-            latitude,
+        longitude,
 
-            longitude,
-
-            bool(wind_only)
-
-        )
+        bool(wind_only)
 
     )
 
 
-    return jsonify(
-
-        result
-
-    )
+    return jsonify(result)
 
 
 # ============================================================
@@ -1084,7 +1206,7 @@ def health():
 
 
 # ============================================================
-# START SERVER
+# START
 # ============================================================
 
 if __name__ == "__main__":
