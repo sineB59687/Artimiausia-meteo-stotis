@@ -2,1045 +2,511 @@
     box-sizing: border-box;
 }
 
-
 html,
 body {
-
     margin: 0;
-
     padding: 0;
-
     width: 100%;
-
     height: 100%;
-
     overflow: hidden;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
+    font-family: Arial, Helvetica, sans-serif;
     color: #222;
-
 }
-
 
 body {
-
     display: flex;
-
     flex-direction: column;
-
     background: #eef1f4;
-
 }
 
 
-/* ==========================================================
-   HEADER
-   ========================================================== */
+/* Viršutinė juosta */
 
 header {
-
     background: white;
-
-    border-bottom:
-        1px solid #d5d9dd;
-
+    border-bottom: 1px solid #d5d9dd;
     z-index: 1000;
-
 }
-
 
 .header-main {
-
     height: 62px;
-
     display: flex;
-
     align-items: center;
-
     gap: 28px;
-
-    padding:
-        0 18px;
-
+    padding: 0 18px;
 }
-
 
 .title-area {
-
     flex-shrink: 0;
-
 }
-
 
 h1 {
-
     margin: 0;
-
     font-size: 19px;
-
     font-weight: 600;
-
     white-space: nowrap;
-
 }
 
 
-/* ==========================================================
-   SEARCH
-   ========================================================== */
+/* Paieška */
 
 .search-area {
-
     display: flex;
-
     align-items: center;
-
     gap: 8px;
-
     flex: 1;
-
 }
-
 
 .autocomplete-wrapper {
-
     position: relative;
-
-    width:
-        min(500px, 100%);
-
+    width: min(500px, 100%);
 }
-
 
 #locationInput {
-
     width: 100%;
-
     height: 36px;
-
-    padding:
-        0 11px;
-
-    border:
-        1px solid #c7ccd1;
-
+    padding: 0 11px;
+    border: 1px solid #c7ccd1;
     border-radius: 5px;
-
     font-size: 14px;
-
     outline: none;
-
 }
-
 
 #locationInput:focus {
-
-    border-color:
-        #3978c9;
-
-    box-shadow:
-        0 0 0 2px
-        rgba(
-            57,
-            120,
-            201,
-            0.12
-        );
-
+    border-color: #3978c9;
+    box-shadow: 0 0 0 2px rgba(57, 120, 201, 0.12);
 }
-
 
 #findButton {
-
     height: 36px;
-
-    padding:
-        0 17px;
-
+    padding: 0 17px;
     border: none;
-
     border-radius: 5px;
-
-    background:
-        #3978c9;
-
+    background: #3978c9;
     color: white;
-
     font-size: 13px;
-
     cursor: pointer;
-
 }
-
 
 #findButton:hover {
-
-    background:
-        #2e67ae;
-
+    background: #2e67ae;
 }
-
 
 #findButton:disabled {
-
-    background:
-        #999;
-
-    cursor:
-        default;
-
+    background: #999;
+    cursor: default;
 }
 
 
-/* ==========================================================
-   WIND FILTER
-   ========================================================== */
+/* Vėjo filtras */
 
 .wind-filter {
-
     display: flex;
-
     align-items: center;
-
     gap: 6px;
-
     margin-left: 5px;
-
     white-space: nowrap;
-
     font-size: 13px;
-
     color: #444;
-
     cursor: pointer;
-
 }
-
 
 .wind-filter input {
-
     width: 15px;
-
     height: 15px;
-
     margin: 0;
-
 }
 
 
-/* ==========================================================
-   STATUS
-   ========================================================== */
+/* Būsenos pranešimas */
 
 .status {
-
     height: 25px;
-
     display: flex;
-
     align-items: center;
-
-    padding:
-        0 18px;
-
-    background:
-        #f8f9fa;
-
-    color:
-        #777;
-
+    padding: 0 18px;
+    background: #f8f9fa;
+    color: #777;
     font-size: 11px;
-
 }
 
 
-/* ==========================================================
-   MAIN / MAP
-   ========================================================== */
+/* Žemėlapis */
 
 main {
-
     position: relative;
-
     flex: 1;
-
     min-height: 0;
-
 }
-
 
 #map {
-
     position: absolute;
-
     inset: 0;
-
     width: 100%;
-
     height: 100%;
-
 }
 
 
-/* ==========================================================
-   RESULTS PANEL
-   ========================================================== */
+/* Stočių rezultatų langeliai */
 
 .results-panel {
-
     position: absolute;
-
     top: 12px;
-
     left: 50%;
-
-    transform:
-        translateX(-50%);
-
+    transform: translateX(-50%);
     z-index: 1000;
-
     display: flex;
-
     gap: 6px;
-
     pointer-events: none;
-
 }
-
 
 .result-card {
-
     min-width: 175px;
-
     display: flex;
-
     align-items: center;
-
     gap: 8px;
-
-    padding:
-        7px 10px;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.95
-        );
-
+    padding: 7px 10px;
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 5px;
-
-    border-left:
-        4px solid;
-
-    box-shadow:
-        0 2px 7px
-        rgba(
-            0,
-            0,
-            0,
-            0.16
-        );
-
+    border-left: 4px solid;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.16);
 }
-
 
 .result-card.primary {
-
-    border-color:
-        #d94a45;
-
+    border-color: #d94a45;
 }
-
 
 .result-card.secondary {
-
-    border-color:
-        #ed9d2f;
-
+    border-color: #ed9d2f;
 }
-
 
 .result-card.tertiary {
-
-    border-color:
-        #d4b500;
-
+    border-color: #d4b500;
 }
-
 
 .result-number {
-
     width: 22px;
-
     height: 22px;
-
     flex-shrink: 0;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     border-radius: 50%;
-
-    background:
-        #555;
-
+    background: #555;
     color: white;
-
     font-size: 11px;
-
     font-weight: bold;
-
 }
-
 
 .result-label {
-
     font-size: 8px;
-
     color: #888;
-
     font-weight: bold;
-
 }
-
 
 .result-name {
-
     max-width: 145px;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
-
     white-space: nowrap;
-
     margin-top: 1px;
-
     font-size: 12px;
-
     font-weight: bold;
-
 }
-
 
 .result-distance {
-
     margin-top: 1px;
-
     font-size: 10px;
-
     color: #666;
-
 }
 
 
-/* ==========================================================
-   LEGEND
-   ========================================================== */
+/* Legenda */
 
 .map-legend {
-
     position: absolute;
-
     left: 14px;
-
     bottom: 28px;
-
     z-index: 1000;
-
     min-width: 215px;
-
-    padding:
-        10px 12px;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.94
-        );
-
-    border:
-        1px solid
-        rgba(
-            0,
-            0,
-            0,
-            0.15
-        );
-
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 6px;
-
-    box-shadow:
-        0 2px 8px
-        rgba(
-            0,
-            0,
-            0,
-            0.15
-        );
-
-    backdrop-filter:
-        blur(3px);
-
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(3px);
 }
-
 
 .legend-title {
-
     margin-bottom: 7px;
-
     padding-bottom: 5px;
-
-    border-bottom:
-        1px solid #ddd;
-
+    border-bottom: 1px solid #ddd;
     font-size: 12px;
-
     font-weight: bold;
-
 }
-
 
 .legend-item {
-
     display: flex;
-
     align-items: center;
-
     gap: 8px;
-
     height: 23px;
-
     font-size: 11px;
-
     color: #444;
-
 }
-
 
 .legend-symbol {
-
     width: 18px;
-
     text-align: center;
-
     display: inline-block;
-
     font-size: 16px;
-
     line-height: 18px;
-
 }
-
 
 .location-symbol {
-
-    color:
-        #2674d8;
-
+    color: #2674d8;
 }
-
 
 .primary-symbol {
-
-    color:
-        #d94a45;
-
+    color: #d94a45;
 }
-
 
 .secondary-symbol {
-
-    color:
-        #ed9d2f;
-
+    color: #ed9d2f;
 }
-
 
 .tertiary-symbol {
-
-    color:
-        #d4b500;
-
+    color: #d4b500;
 }
-
 
 .wind-symbol {
-
-    color:
-        #3978c9;
-
+    color: #3978c9;
     font-size: 22px;
-
 }
 
 
-/* ==========================================================
-   ZOOM BUTTON
-   ========================================================== */
+/* Priartinimo mygtukas */
 
 .zoom-button {
-
     position: absolute;
-
     right: 14px;
-
     bottom: 28px;
-
     z-index: 1000;
-
     height: 35px;
-
-    padding:
-        0 15px;
-
+    padding: 0 15px;
     border: none;
-
     border-radius: 5px;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.95
-        );
-
-    color:
-        #333;
-
-    box-shadow:
-        0 2px 7px
-        rgba(
-            0,
-            0,
-            0,
-            0.18
-        );
-
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.18);
     font-size: 12px;
-
     cursor: pointer;
-
 }
-
 
 .zoom-button:hover {
-
     background: white;
-
 }
-
 
 .zoom-button:disabled {
-
     opacity: 0.55;
-
     cursor: default;
-
 }
 
 
-/* ==========================================================
-   AUTOCOMPLETE
-   ========================================================== */
+/* Vietovių pasiūlymai */
 
 .autocomplete-results {
-
     position: absolute;
-
-    top:
-        calc(100% + 3px);
-
+    top: calc(100% + 3px);
     left: 0;
-
     right: 0;
-
     z-index: 3000;
-
     display: none;
-
     overflow: hidden;
-
     background: white;
-
-    border:
-        1px solid #ccc;
-
+    border: 1px solid #ccc;
     border-radius: 5px;
-
-    box-shadow:
-        0 4px 12px
-        rgba(
-            0,
-            0,
-            0,
-            0.18
-        );
-
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
 }
-
 
 .autocomplete-item {
-
-    padding:
-        8px 11px;
-
-    border-bottom:
-        1px solid #eee;
-
+    padding: 8px 11px;
+    border-bottom: 1px solid #eee;
     cursor: pointer;
-
 }
-
 
 .autocomplete-item:last-child {
-
     border-bottom: none;
-
 }
-
 
 .autocomplete-item:hover {
-
-    background:
-        #f1f5fa;
-
+    background: #f1f5fa;
 }
-
 
 .autocomplete-name {
-
     font-size: 13px;
-
     font-weight: 600;
-
 }
-
 
 .autocomplete-address {
-
     margin-top: 2px;
-
     color: #777;
-
     font-size: 11px;
-
 }
-
 
 .autocomplete-loading {
-
-    padding:
-        9px 11px;
-
+    padding: 9px 11px;
     color: #777;
-
     font-size: 11px;
-
 }
 
 
-/* ==========================================================
-   CUSTOM STATION MARKERS
-   ========================================================== */
+/* Stočių žymekliai */
 
 .station-marker {
-
     width: 30px;
-
     height: 30px;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     border-radius: 50%;
-
     color: white;
-
     font-size: 15px;
-
     font-weight: bold;
-
-    border:
-        2px solid white;
-
-    box-shadow:
-        0 2px 5px
-        rgba(
-            0,
-            0,
-            0,
-            0.45
-        );
-
+    border: 2px solid white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
 }
-
 
 .location-marker {
-
-    background:
-        #2674d8;
-
+    background: #2674d8;
 }
-
 
 .primary-marker {
-
-    background:
-        #d94a45;
-
+    background: #d94a45;
 }
-
 
 .secondary-marker {
-
-    background:
-        #ed9d2f;
-
+    background: #ed9d2f;
 }
-
 
 .tertiary-marker {
-
-    background:
-        #c7ae00;
-
+    background: #c7ae00;
 }
 
 
-/* ==========================================================
-   OTHER WIND STATION MARKERS
-   ========================================================== */
+/* Kitos vėjo stotys */
 
 .wind-station-map-marker {
-
     width: 18px;
-
     height: 18px;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
-    color:
-        #3978c9;
-
-    background:
-        white;
-
-    border:
-        2px solid #3978c9;
-
+    color: #3978c9;
+    background: white;
+    border: 2px solid #3978c9;
     border-radius: 50%;
-
     font-size: 14px;
-
     font-weight: bold;
-
-    box-shadow:
-        0 1px 4px
-        rgba(
-            0,
-            0,
-            0,
-            0.35
-        );
-
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
 
-/* ==========================================================
-   MOBILE
-   ========================================================== */
+/* Mažesni ekranai */
 
 @media (max-width: 900px) {
 
-
     .header-main {
-
         height: auto;
-
         min-height: 58px;
-
-        padding:
-            8px 12px;
-
+        padding: 8px 12px;
         gap: 10px;
-
     }
-
 
     h1 {
-
         font-size: 15px;
-
     }
-
 
     .search-area {
-
         gap: 5px;
-
     }
-
 
     .wind-filter span {
-
         display: none;
-
     }
-
 
     .wind-filter {
-
         margin-left: 0;
-
     }
-
 
     .status {
-
         height: 22px;
-
-        padding:
-            0 12px;
-
+        padding: 0 12px;
     }
-
 
     .results-panel {
-
         left: 10px;
-
         right: 10px;
-
         transform: none;
-
         gap: 4px;
-
     }
-
 
     .result-card {
-
         min-width: 0;
-
         flex: 1;
-
-        padding:
-            6px;
-
+        padding: 6px;
     }
-
 
     .result-number {
-
         display: none;
-
     }
-
 
     .result-name {
-
         max-width: 100%;
-
         font-size: 10px;
-
     }
-
 
     .result-label {
-
         font-size: 7px;
-
     }
-
 
     .result-distance {
-
         font-size: 9px;
-
     }
-
 
     .map-legend {
-
         left: 8px;
-
         bottom: 12px;
-
         min-width: 185px;
-
-        padding:
-            8px 9px;
-
+        padding: 8px 9px;
     }
-
 
     .legend-item {
-
         font-size: 10px;
-
     }
-
 
     .zoom-button {
-
         right: 8px;
-
         bottom: 12px;
-
     }
-
 }
 
 
 @media (max-width: 600px) {
 
-
     .title-area {
-
         display: none;
-
     }
-
 
     .search-area {
-
         width: 100%;
-
     }
-
 
     .autocomplete-wrapper {
-
         flex: 1;
-
     }
 
-
     #findButton {
-
-        padding:
-            0 11px;
-
+        padding: 0 11px;
     }
 
 }
