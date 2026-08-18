@@ -19,8 +19,7 @@ L.tileLayer(
 
     {
 
-        maxZoom:
-            19,
+        maxZoom: 19,
 
         attribution:
             "&copy; OpenStreetMap contributors"
@@ -67,6 +66,17 @@ let currentTertiary = null;
 
 
 // ============================================================
+// AUTOCOMPLETE
+// ============================================================
+
+let autocompleteTimer = null;
+
+let autocompleteController = null;
+
+let autocompleteResults = [];
+
+
+// ============================================================
 // FILTER
 // ============================================================
 
@@ -101,7 +111,7 @@ function escapeHtml(value) {
 
 
 // ============================================================
-// CLEAR MAP OBJECTS
+// CLEAR MAP
 // ============================================================
 
 function clearMapObjects() {
@@ -183,26 +193,22 @@ function clearMapObjects() {
 const windStationIcon =
     L.divIcon({
 
-        className:
-            "",
+        className: "",
 
         html:
             '<div class="wind-station-marker"></div>',
 
-        iconSize:
-            [12, 12],
+        iconSize: [12, 12],
 
-        iconAnchor:
-            [6, 6],
+        iconAnchor: [6, 6],
 
-        popupAnchor:
-            [0, -6]
+        popupAnchor: [0, -6]
 
     });
 
 
 // ============================================================
-// UPDATE RESULTS
+// UPDATE RESULT CARDS
 // ============================================================
 
 function updateResults(
@@ -293,7 +299,7 @@ function updateResults(
 
 
 // ============================================================
-// DISPLAY ALL WIND STATIONS
+// DISPLAY WIND STATIONS
 // ============================================================
 
 function displayWindStations(
@@ -316,7 +322,8 @@ function displayWindStations(
     }
 
 
-    const selectedCodes = new Set();
+    const selectedCodes =
+        new Set();
 
 
     if (primary) {
@@ -352,9 +359,11 @@ function displayWindStations(
 
 
             if (
+
                 selectedCodes.has(
                     station.code
                 )
+
             ) {
 
                 return;
@@ -481,20 +490,15 @@ function displayStations(
 
             {
 
-                radius:
-                    8,
+                radius: 8,
 
-                color:
-                    "#ffffff",
+                color: "#ffffff",
 
-                weight:
-                    2,
+                weight: 2,
 
-                fillColor:
-                    "#3578d4",
+                fillColor: "#3578d4",
 
-                fillOpacity:
-                    1
+                fillOpacity: 1
 
             }
 
@@ -531,20 +535,15 @@ function displayStations(
 
                 {
 
-                    radius:
-                        10,
+                    radius: 10,
 
-                    color:
-                        "#ffffff",
+                    color: "#ffffff",
 
-                    weight:
-                        2,
+                    weight: 2,
 
-                    fillColor:
-                        "#d9534f",
+                    fillColor: "#d9534f",
 
-                    fillOpacity:
-                        1
+                    fillOpacity: 1
 
                 }
 
@@ -594,11 +593,9 @@ function displayStations(
 
                 {
 
-                    color:
-                        "#d9534f",
+                    color: "#d9534f",
 
-                    weight:
-                        3
+                    weight: 3
 
                 }
 
@@ -626,20 +623,15 @@ function displayStations(
 
                 {
 
-                    radius:
-                        9,
+                    radius: 9,
 
-                    color:
-                        "#ffffff",
+                    color: "#ffffff",
 
-                    weight:
-                        2,
+                    weight: 2,
 
-                    fillColor:
-                        "#f0ad4e",
+                    fillColor: "#f0ad4e",
 
-                    fillOpacity:
-                        1
+                    fillOpacity: 1
 
                 }
 
@@ -689,14 +681,11 @@ function displayStations(
 
                 {
 
-                    color:
-                        "#f0ad4e",
+                    color: "#f0ad4e",
 
-                    weight:
-                        3,
+                    weight: 3,
 
-                    dashArray:
-                        "8,8"
+                    dashArray: "8,8"
 
                 }
 
@@ -724,20 +713,15 @@ function displayStations(
 
                 {
 
-                    radius:
-                        9,
+                    radius: 9,
 
-                    color:
-                        "#ffffff",
+                    color: "#ffffff",
 
-                    weight:
-                        2,
+                    weight: 2,
 
-                    fillColor:
-                        "#f7d154",
+                    fillColor: "#f7d154",
 
-                    fillOpacity:
-                        1
+                    fillOpacity: 1
 
                 }
 
@@ -787,14 +771,11 @@ function displayStations(
 
                 {
 
-                    color:
-                        "#f7d154",
+                    color: "#f7d154",
 
-                    weight:
-                        3,
+                    weight: 3,
 
-                    dashArray:
-                        "3,8"
+                    dashArray: "3,8"
 
                 }
 
@@ -823,7 +804,7 @@ function displayStations(
 
 
 // ============================================================
-// FIND STATIONS
+// FIND STATIONS FROM COORDINATES
 // ============================================================
 
 async function findStations(
@@ -852,8 +833,7 @@ async function findStations(
 
                 {
 
-                    method:
-                        "POST",
+                    method: "POST",
 
                     headers: {
 
@@ -886,8 +866,10 @@ async function findStations(
 
 
         if (
+
             !response.ok ||
             !result.success
+
         ) {
 
             throw new Error(
@@ -958,7 +940,409 @@ async function findStations(
 
 
 // ============================================================
-// SEARCH BY CITY / ADDRESS
+// CLEAR AUTOCOMPLETE
+// ============================================================
+
+function clearAutocomplete() {
+
+    const container =
+        document.getElementById(
+            "autocompleteResults"
+        );
+
+
+    container.innerHTML = "";
+
+    container.style.display =
+        "none";
+
+
+    autocompleteResults = [];
+
+}
+
+
+// ============================================================
+// SHOW AUTOCOMPLETE LOADING
+// ============================================================
+
+function showAutocompleteLoading() {
+
+    const container =
+        document.getElementById(
+            "autocompleteResults"
+        );
+
+
+    container.innerHTML =
+        '<div class="autocomplete-loading">'
+        + "Ieškoma..."
+        + "</div>";
+
+
+    container.style.display =
+        "block";
+
+}
+
+
+// ============================================================
+// DISPLAY AUTOCOMPLETE RESULTS
+// ============================================================
+
+function displayAutocompleteResults(
+
+    results
+
+) {
+
+
+    const container =
+        document.getElementById(
+            "autocompleteResults"
+        );
+
+
+    container.innerHTML = "";
+
+
+    autocompleteResults =
+        results;
+
+
+    if (!results.length) {
+
+        container.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    results.forEach(
+
+        (result, index) => {
+
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "autocomplete-item";
+
+
+            item.innerHTML =
+
+                '<div class="autocomplete-name">'
+                + escapeHtml(
+                    result.name
+                )
+                + "</div>"
+
+                +
+
+                '<div class="autocomplete-address">'
+                + escapeHtml(
+                    result.formatted
+                )
+                + "</div>";
+
+
+            item.addEventListener(
+
+                "mousedown",
+
+                function(event) {
+
+                    event.preventDefault();
+
+                    selectAutocompleteResult(
+                        index
+                    );
+
+                }
+
+            );
+
+
+            container.appendChild(
+                item
+            );
+
+        }
+
+    );
+
+
+    container.style.display =
+        "block";
+
+}
+
+
+// ============================================================
+// SELECT AUTOCOMPLETE RESULT
+// ============================================================
+
+function selectAutocompleteResult(
+
+    index
+
+) {
+
+
+    const result =
+        autocompleteResults[index];
+
+
+    if (!result) {
+
+        return;
+
+    }
+
+
+    const input =
+        document.getElementById(
+            "locationInput"
+        );
+
+
+    input.value =
+        result.formatted;
+
+
+    clearAutocomplete();
+
+
+    // ========================================================
+    // IMPORTANT:
+    // We already have coordinates.
+    //
+    // No second geocoding request is needed.
+    // ========================================================
+
+    findStations(
+
+        result.latitude,
+
+        result.longitude,
+
+        result.formatted
+
+    );
+
+}
+
+
+// ============================================================
+// AUTOCOMPLETE SEARCH
+// ============================================================
+
+async function requestAutocomplete(
+
+    text
+
+) {
+
+
+    if (autocompleteController) {
+
+        autocompleteController.abort();
+
+    }
+
+
+    autocompleteController =
+        new AbortController();
+
+
+    showAutocompleteLoading();
+
+
+    try {
+
+        const response =
+            await fetch(
+
+                "/api/autocomplete?text="
+                +
+                encodeURIComponent(
+                    text
+                ),
+
+                {
+
+                    method: "GET",
+
+                    signal:
+                        autocompleteController.signal
+
+                }
+
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok || !result.success) {
+
+            clearAutocomplete();
+
+            return;
+
+        }
+
+
+        displayAutocompleteResults(
+
+            result.results
+
+        );
+
+    }
+
+    catch (error) {
+
+        if (
+            error.name !==
+            "AbortError"
+        ) {
+
+            console.error(
+                "Autocomplete error:",
+                error
+            );
+
+            clearAutocomplete();
+
+        }
+
+    }
+
+}
+
+
+// ============================================================
+// INPUT EVENT
+// ============================================================
+
+document
+    .getElementById(
+        "locationInput"
+    )
+    .addEventListener(
+
+        "input",
+
+        function() {
+
+
+            const text =
+                this.value.trim();
+
+
+            clearTimeout(
+                autocompleteTimer
+            );
+
+
+            if (text.length < 2) {
+
+                clearAutocomplete();
+
+                return;
+
+            }
+
+
+            // Wait 300 ms after typing stops.
+
+            autocompleteTimer =
+                setTimeout(
+
+                    function() {
+
+                        requestAutocomplete(
+                            text
+                        );
+
+                    },
+
+                    300
+
+                );
+
+        }
+
+    );
+
+
+// ============================================================
+// SEARCH BY ENTER
+// ============================================================
+
+document
+    .getElementById(
+        "locationInput"
+    )
+    .addEventListener(
+
+        "keydown",
+
+        function(event) {
+
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                event.preventDefault();
+
+
+                clearAutocomplete();
+
+
+                searchLocation();
+
+            }
+
+        }
+
+    );
+
+
+// ============================================================
+// SEARCH BUTTON
+// ============================================================
+
+document
+    .getElementById(
+        "findButton"
+    )
+    .addEventListener(
+
+        "click",
+
+        function() {
+
+            clearAutocomplete();
+
+            searchLocation();
+
+        }
+
+    );
+
+
+// ============================================================
+// DIRECT SEARCH
 // ============================================================
 
 async function searchLocation() {
@@ -1010,10 +1394,6 @@ async function searchLocation() {
     try {
 
 
-        // ====================================================
-        // GEOCODING REQUEST
-        // ====================================================
-
         const response =
             await fetch(
 
@@ -1021,8 +1401,7 @@ async function searchLocation() {
 
                 {
 
-                    method:
-                        "POST",
+                    method: "POST",
 
                     headers: {
 
@@ -1048,15 +1427,11 @@ async function searchLocation() {
             await response.json();
 
 
-        console.log(
-            "Geocoding response:",
-            result
-        );
-
-
         if (
+
             !response.ok ||
             !result.success
+
         ) {
 
             throw new Error(
@@ -1069,20 +1444,6 @@ async function searchLocation() {
 
         }
 
-
-        // ====================================================
-        // LOCATION FOUND
-        // ====================================================
-
-        document.getElementById(
-            "status"
-        ).textContent =
-            "Vieta rasta. Ieškomos artimiausios stotys...";
-
-
-        // ====================================================
-        // FIND STATIONS
-        // ====================================================
 
         await findStations(
 
@@ -1127,6 +1488,38 @@ async function searchLocation() {
 
 
 // ============================================================
+// CLOSE AUTOCOMPLETE WHEN CLICKING OUTSIDE
+// ============================================================
+
+document.addEventListener(
+
+    "click",
+
+    function(event) {
+
+
+        const wrapper =
+            document.querySelector(
+                ".autocomplete-wrapper"
+            );
+
+
+        if (
+            !wrapper.contains(
+                event.target
+            )
+        ) {
+
+            clearAutocomplete();
+
+        }
+
+    }
+
+);
+
+
+// ============================================================
 // MAP CLICK
 // ============================================================
 
@@ -1143,6 +1536,9 @@ map.on(
 
         const longitude =
             event.latlng.lng;
+
+
+        clearAutocomplete();
 
 
         await findStations(
@@ -1198,52 +1594,6 @@ document
 
 
 // ============================================================
-// SEARCH BUTTON
-// ============================================================
-
-document
-    .getElementById(
-        "findButton"
-    )
-    .addEventListener(
-
-        "click",
-
-        searchLocation
-
-    );
-
-
-// ============================================================
-// ENTER KEY
-// ============================================================
-
-document
-    .getElementById(
-        "locationInput"
-    )
-    .addEventListener(
-
-        "keydown",
-
-        function(event) {
-
-            if (
-                event.key === "Enter"
-            ) {
-
-                event.preventDefault();
-
-                searchLocation();
-
-            }
-
-        }
-
-    );
-
-
-// ============================================================
 // ZOOM BUTTON
 // ============================================================
 
@@ -1259,8 +1609,10 @@ document
 
 
             if (
+
                 !currentUserLocation ||
                 !currentPrimary
+
             ) {
 
                 return;
@@ -1340,7 +1692,7 @@ document
 
 
 // ============================================================
-// INITIAL MAP SIZE FIX
+// FIX MAP SIZE
 // ============================================================
 
 setTimeout(
