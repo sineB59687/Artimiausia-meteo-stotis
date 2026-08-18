@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="lt">
 
 <head>
@@ -36,6 +37,7 @@
 
     <div class="header-main">
 
+
         <div class="title-area">
 
             <h1>
@@ -46,6 +48,7 @@
 
 
         <div class="search-area">
+
 
             <div class="autocomplete-wrapper">
 
@@ -86,7 +89,9 @@
 
             </label>
 
+
         </div>
+
 
     </div>
 
@@ -98,12 +103,130 @@
         Spustelėkite žemėlapį arba įveskite vietovę
     </div>
 
+
 </header>
 
 
 <main>
 
+
+    <!-- ==================================================
+         MAP
+         ================================================== -->
+
     <div id="map"></div>
+
+
+    <!-- ==================================================
+         RESULTS
+         ================================================== -->
+
+    <div class="results-panel">
+
+
+        <div class="result-card primary">
+
+            <div class="result-number">
+                1
+            </div>
+
+
+            <div>
+
+                <div class="result-label">
+                    ARTIMIAUSIA
+                </div>
+
+
+                <div
+                    id="primaryName"
+                    class="result-name"
+                >
+                    —
+                </div>
+
+
+                <div
+                    id="primaryDistance"
+                    class="result-distance"
+                >
+                    —
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="result-card secondary">
+
+            <div class="result-number">
+                2
+            </div>
+
+
+            <div>
+
+                <div class="result-label">
+                    ANTROJI
+                </div>
+
+
+                <div
+                    id="secondaryName"
+                    class="result-name"
+                >
+                    —
+                </div>
+
+
+                <div
+                    id="secondaryDistance"
+                    class="result-distance"
+                >
+                    —
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="result-card tertiary">
+
+            <div class="result-number">
+                3
+            </div>
+
+
+            <div>
+
+                <div class="result-label">
+                    TREČIOJI
+                </div>
+
+
+                <div
+                    id="tertiaryName"
+                    class="result-name"
+                >
+                    —
+                </div>
+
+
+                <div
+                    id="tertiaryDistance"
+                    class="result-distance"
+                >
+                    —
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
 
 
     <!-- ==================================================
@@ -111,6 +234,7 @@
          ================================================== -->
 
     <div class="map-legend">
+
 
         <div class="legend-title">
             Legenda
@@ -179,114 +303,18 @@
             </span>
 
             <span>
-                Vėjo duomenis teikianti stotis
+                Vėjo duomenų stotis
             </span>
 
         </div>
+
 
     </div>
 
 
     <!-- ==================================================
-         RESULTS
+         ZOOM BUTTON
          ================================================== -->
-
-    <div class="results-panel">
-
-        <div class="result-card primary">
-
-            <div class="result-number">
-                1
-            </div>
-
-            <div>
-
-                <div class="result-label">
-                    ARTIMIAUSIA
-                </div>
-
-                <div
-                    id="primaryName"
-                    class="result-name"
-                >
-                    —
-                </div>
-
-                <div
-                    id="primaryDistance"
-                    class="result-distance"
-                >
-                    —
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="result-card secondary">
-
-            <div class="result-number">
-                2
-            </div>
-
-            <div>
-
-                <div class="result-label">
-                    ANTROJI
-                </div>
-
-                <div
-                    id="secondaryName"
-                    class="result-name"
-                >
-                    —
-                </div>
-
-                <div
-                    id="secondaryDistance"
-                    class="result-distance"
-                >
-                    —
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="result-card tertiary">
-
-            <div class="result-number">
-                3
-            </div>
-
-            <div>
-
-                <div class="result-label">
-                    TREČIOJI
-                </div>
-
-                <div
-                    id="tertiaryName"
-                    class="result-name"
-                >
-                    —
-                </div>
-
-                <div
-                    id="tertiaryDistance"
-                    class="result-distance"
-                >
-                    —
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
 
     <button
         id="zoomButton"
@@ -296,6 +324,7 @@
     >
         Priartinti
     </button>
+
 
 </main>
 
