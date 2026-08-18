@@ -110,7 +110,8 @@ h1 {
 
     position: relative;
 
-    width: min(500px, 100%);
+    width:
+        min(500px, 100%);
 
 }
 
@@ -286,149 +287,6 @@ main {
 
 
 /* ==========================================================
-   LEGEND
-   ========================================================== */
-
-.map-legend {
-
-    position: absolute;
-
-    left: 14px;
-
-    bottom: 28px;
-
-    z-index: 1000;
-
-    min-width: 215px;
-
-    padding:
-        10px 12px;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.94
-        );
-
-    border:
-        1px solid
-        rgba(
-            0,
-            0,
-            0,
-            0.15
-        );
-
-    border-radius: 6px;
-
-    box-shadow:
-        0 2px 8px
-        rgba(
-            0,
-            0,
-            0,
-            0.15
-        );
-
-    backdrop-filter:
-        blur(3px);
-
-}
-
-
-.legend-title {
-
-    margin-bottom: 7px;
-
-    padding-bottom: 5px;
-
-    border-bottom:
-        1px solid #ddd;
-
-    font-size: 12px;
-
-    font-weight: bold;
-
-}
-
-
-.legend-item {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    height: 23px;
-
-    font-size: 11px;
-
-    color: #444;
-
-}
-
-
-.legend-symbol {
-
-    width: 18px;
-
-    text-align: center;
-
-    display: inline-block;
-
-    font-size: 16px;
-
-    line-height: 18px;
-
-}
-
-
-.location-symbol {
-
-    color:
-        #2674d8;
-
-}
-
-
-.primary-symbol {
-
-    color:
-        #d94a45;
-
-}
-
-
-.secondary-symbol {
-
-    color:
-        #ed9d2f;
-
-}
-
-
-.tertiary-symbol {
-
-    color:
-        #d4b500;
-
-}
-
-
-.wind-symbol {
-
-    color:
-        #3978c9;
-
-    font-size: 22px;
-
-}
-
-
-/* ==========================================================
    RESULTS PANEL
    ========================================================== */
 
@@ -586,6 +444,149 @@ main {
 
 
 /* ==========================================================
+   LEGEND
+   ========================================================== */
+
+.map-legend {
+
+    position: absolute;
+
+    left: 14px;
+
+    bottom: 28px;
+
+    z-index: 1000;
+
+    min-width: 215px;
+
+    padding:
+        10px 12px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.94
+        );
+
+    border:
+        1px solid
+        rgba(
+            0,
+            0,
+            0,
+            0.15
+        );
+
+    border-radius: 6px;
+
+    box-shadow:
+        0 2px 8px
+        rgba(
+            0,
+            0,
+            0,
+            0.15
+        );
+
+    backdrop-filter:
+        blur(3px);
+
+}
+
+
+.legend-title {
+
+    margin-bottom: 7px;
+
+    padding-bottom: 5px;
+
+    border-bottom:
+        1px solid #ddd;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+}
+
+
+.legend-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    height: 23px;
+
+    font-size: 11px;
+
+    color: #444;
+
+}
+
+
+.legend-symbol {
+
+    width: 18px;
+
+    text-align: center;
+
+    display: inline-block;
+
+    font-size: 16px;
+
+    line-height: 18px;
+
+}
+
+
+.location-symbol {
+
+    color:
+        #2674d8;
+
+}
+
+
+.primary-symbol {
+
+    color:
+        #d94a45;
+
+}
+
+
+.secondary-symbol {
+
+    color:
+        #ed9d2f;
+
+}
+
+
+.tertiary-symbol {
+
+    color:
+        #d4b500;
+
+}
+
+
+.wind-symbol {
+
+    color:
+        #3978c9;
+
+    font-size: 22px;
+
+}
+
+
+/* ==========================================================
    ZOOM BUTTON
    ========================================================== */
 
@@ -659,7 +660,8 @@ main {
 
     position: absolute;
 
-    top: calc(100% + 3px);
+    top:
+        calc(100% + 3px);
 
     left: 0;
 
@@ -751,14 +753,14 @@ main {
 
 
 /* ==========================================================
-   CUSTOM MAP MARKERS
+   CUSTOM STATION MARKERS
    ========================================================== */
 
 .station-marker {
 
-    width: 28px;
+    width: 30px;
 
-    height: 28px;
+    height: 30px;
 
     display: flex;
 
@@ -794,8 +796,6 @@ main {
     background:
         #2674d8;
 
-    border-radius: 50%;
-
 }
 
 
@@ -818,7 +818,50 @@ main {
 .tertiary-marker {
 
     background:
-        #d4b500;
+        #c7ae00;
+
+}
+
+
+/* ==========================================================
+   OTHER WIND STATION MARKERS
+   ========================================================== */
+
+.wind-station-map-marker {
+
+    width: 18px;
+
+    height: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color:
+        #3978c9;
+
+    background:
+        white;
+
+    border:
+        2px solid #3978c9;
+
+    border-radius: 50%;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    box-shadow:
+        0 1px 4px
+        rgba(
+            0,
+            0,
+            0,
+            0.35
+        );
 
 }
 
@@ -945,7 +988,8 @@ main {
 
         min-width: 185px;
 
-        padding: 8px 9px;
+        padding:
+            8px 9px;
 
     }
 
