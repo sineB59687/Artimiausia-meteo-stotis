@@ -70,12 +70,23 @@
 
         <div class="search-controls">
 
-            <input
-                id="locationInput"
-                type="text"
-                autocomplete="off"
-                placeholder="Įveskite miestą arba adresą..."
-            >
+
+            <div class="autocomplete-wrapper">
+
+                <input
+                    id="locationInput"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="Įveskite miestą arba adresą..."
+                >
+
+
+                <div
+                    id="autocompleteResults"
+                    class="autocomplete-results"
+                ></div>
+
+            </div>
 
 
             <button
@@ -84,6 +95,7 @@
             >
                 Ieškoti stočių
             </button>
+
 
         </div>
 
