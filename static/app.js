@@ -77,7 +77,98 @@ let autocompleteResults = [];
 
 
 // ============================================================
-// FILTER
+// CUSTOM MAP ICONS
+// ============================================================
+
+function createMarkerIcon(
+
+    symbol,
+
+    className
+
+) {
+
+    return L.divIcon({
+
+        className: "",
+
+        html:
+            '<div class="station-marker '
+            + className
+            + '">'
+            + symbol
+            + "</div>",
+
+        iconSize:
+            [30, 30],
+
+        iconAnchor:
+            [15, 15],
+
+        popupAnchor:
+            [0, -17]
+
+    });
+
+}
+
+
+const locationIcon =
+    createMarkerIcon(
+        "●",
+        "location-marker"
+    );
+
+
+const primaryIcon =
+    createMarkerIcon(
+        "★",
+        "primary-marker"
+    );
+
+
+const secondaryIcon =
+    createMarkerIcon(
+        "▲",
+        "secondary-marker"
+    );
+
+
+const tertiaryIcon =
+    createMarkerIcon(
+        "■",
+        "tertiary-marker"
+    );
+
+
+// ============================================================
+// WIND STATION ICON
+// ============================================================
+
+const windStationIcon =
+    L.divIcon({
+
+        className: "",
+
+        html:
+            '<div class="wind-station-map-marker">'
+            + "•"
+            + "</div>",
+
+        iconSize:
+            [18, 18],
+
+        iconAnchor:
+            [9, 9],
+
+        popupAnchor:
+            [0, -9]
+
+    });
+
+
+// ============================================================
+// WIND FILTER
 // ============================================================
 
 function windOnlyEnabled() {
@@ -111,7 +202,7 @@ function escapeHtml(value) {
 
 
 // ============================================================
-// CLEAR MAP
+// CLEAR MAP OBJECTS
 // ============================================================
 
 function clearMapObjects() {
@@ -184,27 +275,6 @@ function clearMapObjects() {
     tertiaryLine = null;
 
 }
-
-
-// ============================================================
-// WIND STATION ICON
-// ============================================================
-
-const windStationIcon =
-    L.divIcon({
-
-        className: "",
-
-        html:
-            '<div class="wind-station-marker"></div>',
-
-        iconSize: [12, 12],
-
-        iconAnchor: [6, 6],
-
-        popupAnchor: [0, -6]
-
-    });
 
 
 // ============================================================
@@ -299,7 +369,7 @@ function updateResults(
 
 
 // ============================================================
-// DISPLAY WIND STATIONS
+// DISPLAY OTHER WIND STATIONS
 // ============================================================
 
 function displayWindStations(
@@ -357,6 +427,9 @@ function displayWindStations(
 
         station => {
 
+
+            // Don't create a generic marker
+            // on top of the three selected stations.
 
             if (
 
@@ -478,7 +551,7 @@ function displayStations(
     // ========================================================
 
     userMarker =
-        L.circleMarker(
+        L.marker(
 
             [
 
@@ -490,15 +563,8 @@ function displayStations(
 
             {
 
-                radius: 8,
-
-                color: "#ffffff",
-
-                weight: 2,
-
-                fillColor: "#3578d4",
-
-                fillOpacity: 1
+                icon:
+                    locationIcon
 
             }
 
@@ -517,13 +583,14 @@ function displayStations(
 
 
     // ========================================================
-    // PRIMARY
+    // PRIMARY STATION
     // ========================================================
 
     if (primary) {
 
+
         primaryMarker =
-            L.circleMarker(
+            L.marker(
 
                 [
 
@@ -535,15 +602,8 @@ function displayStations(
 
                 {
 
-                    radius: 10,
-
-                    color: "#ffffff",
-
-                    weight: 2,
-
-                    fillColor: "#d9534f",
-
-                    fillOpacity: 1
+                    icon:
+                        primaryIcon
 
                 }
 
@@ -593,9 +653,11 @@ function displayStations(
 
                 {
 
-                    color: "#d9534f",
+                    color:
+                        "#d94a45",
 
-                    weight: 3
+                    weight:
+                        3
 
                 }
 
@@ -605,13 +667,14 @@ function displayStations(
 
 
     // ========================================================
-    // SECONDARY
+    // SECONDARY STATION
     // ========================================================
 
     if (secondary) {
 
+
         secondaryMarker =
-            L.circleMarker(
+            L.marker(
 
                 [
 
@@ -623,15 +686,8 @@ function displayStations(
 
                 {
 
-                    radius: 9,
-
-                    color: "#ffffff",
-
-                    weight: 2,
-
-                    fillColor: "#f0ad4e",
-
-                    fillOpacity: 1
+                    icon:
+                        secondaryIcon
 
                 }
 
@@ -681,11 +737,14 @@ function displayStations(
 
                 {
 
-                    color: "#f0ad4e",
+                    color:
+                        "#ed9d2f",
 
-                    weight: 3,
+                    weight:
+                        3,
 
-                    dashArray: "8,8"
+                    dashArray:
+                        "8,8"
 
                 }
 
@@ -695,13 +754,14 @@ function displayStations(
 
 
     // ========================================================
-    // TERTIARY
+    // TERTIARY STATION
     // ========================================================
 
     if (tertiary) {
 
+
         tertiaryMarker =
-            L.circleMarker(
+            L.marker(
 
                 [
 
@@ -713,15 +773,8 @@ function displayStations(
 
                 {
 
-                    radius: 9,
-
-                    color: "#ffffff",
-
-                    weight: 2,
-
-                    fillColor: "#f7d154",
-
-                    fillOpacity: 1
+                    icon:
+                        tertiaryIcon
 
                 }
 
@@ -771,11 +824,14 @@ function displayStations(
 
                 {
 
-                    color: "#f7d154",
+                    color:
+                        "#c7ae00",
 
-                    weight: 3,
+                    weight:
+                        3,
 
-                    dashArray: "3,8"
+                    dashArray:
+                        "3,8"
 
                 }
 
@@ -785,7 +841,7 @@ function displayStations(
 
 
     // ========================================================
-    // ALL WIND STATIONS
+    // OTHER WIND STATIONS
     // ========================================================
 
     displayWindStations(
@@ -804,7 +860,7 @@ function displayStations(
 
 
 // ============================================================
-// FIND STATIONS FROM COORDINATES
+// FIND STATIONS
 // ============================================================
 
 async function findStations(
@@ -833,7 +889,8 @@ async function findStations(
 
                 {
 
-                    method: "POST",
+                    method:
+                        "POST",
 
                     headers: {
 
@@ -955,7 +1012,6 @@ function clearAutocomplete() {
 
     container.style.display =
         "none";
-
 
     autocompleteResults = [];
 
@@ -1119,12 +1175,8 @@ function selectAutocompleteResult(
     clearAutocomplete();
 
 
-    // ========================================================
-    // IMPORTANT:
-    // We already have coordinates.
-    //
-    // No second geocoding request is needed.
-    // ========================================================
+    // Geoapify already returned the coordinates.
+    // Therefore there is NO second geocoding request.
 
     findStations(
 
@@ -1140,7 +1192,7 @@ function selectAutocompleteResult(
 
 
 // ============================================================
-// AUTOCOMPLETE SEARCH
+// REQUEST AUTOCOMPLETE
 // ============================================================
 
 async function requestAutocomplete(
@@ -1177,7 +1229,8 @@ async function requestAutocomplete(
 
                 {
 
-                    method: "GET",
+                    method:
+                        "GET",
 
                     signal:
                         autocompleteController.signal
@@ -1191,7 +1244,12 @@ async function requestAutocomplete(
             await response.json();
 
 
-        if (!response.ok || !result.success) {
+        if (
+
+            !response.ok ||
+            !result.success
+
+        ) {
 
             clearAutocomplete();
 
@@ -1211,8 +1269,10 @@ async function requestAutocomplete(
     catch (error) {
 
         if (
+
             error.name !==
             "AbortError"
+
         ) {
 
             console.error(
@@ -1230,7 +1290,7 @@ async function requestAutocomplete(
 
 
 // ============================================================
-// INPUT EVENT
+// INPUT / AUTOCOMPLETE
 // ============================================================
 
 document
@@ -1261,8 +1321,6 @@ document
 
             }
 
-
-            // Wait 300 ms after typing stops.
 
             autocompleteTimer =
                 setTimeout(
@@ -1305,9 +1363,7 @@ document
 
                 event.preventDefault();
 
-
                 clearAutocomplete();
-
 
                 searchLocation();
 
@@ -1342,7 +1398,7 @@ document
 
 
 // ============================================================
-// DIRECT SEARCH
+// DIRECT LOCATION SEARCH
 // ============================================================
 
 async function searchLocation() {
@@ -1393,7 +1449,6 @@ async function searchLocation() {
 
     try {
 
-
         const response =
             await fetch(
 
@@ -1401,7 +1456,8 @@ async function searchLocation() {
 
                 {
 
-                    method: "POST",
+                    method:
+                        "POST",
 
                     headers: {
 
@@ -1480,7 +1536,7 @@ async function searchLocation() {
             false;
 
         button.textContent =
-            "Ieškoti stočių";
+            "Ieškoti";
 
     }
 
@@ -1680,7 +1736,7 @@ document
                 {
 
                     padding:
-                        [60, 60]
+                        [70, 70]
 
                 }
 
@@ -1692,7 +1748,7 @@ document
 
 
 // ============================================================
-// FIX MAP SIZE
+// INITIAL MAP SIZE
 // ============================================================
 
 setTimeout(
